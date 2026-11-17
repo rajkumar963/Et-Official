@@ -1,0 +1,533 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens. Use them as Tailwind utilities, e.g. bg-bg, bg-panel, text-fg, text-muted,
+ * border-line, border-line-strong, text-violet-3, text-gain, text-loss, font-display, ease-smooth.
+ * Exact one-off values from the original design use arbitrary values (e.g. text-[12.5px]).
+ */
+@theme {
+  --color-bg: #06060b;
+  --color-bg-2: #0a0a12;
+  --color-panel: rgba(17, 17, 28, 0.66);
+  --color-panel-solid: #11111b;
+  --color-raised: #181826;
+  --color-line: rgba(255, 255, 255, 0.075);
+  --color-line-strong: rgba(255, 255, 255, 0.13);
+  --color-fg: #f4f3f8;
+  --color-muted: #9a98ad;
+  --color-dim: #6b6980;
+  --color-violet: #8b5cf6;
+  --color-violet-2: #a78bfa;
+  --color-violet-3: #c4b5fd;
+  --color-cyan: #22d3ee;
+  --color-gain: #4ade80;
+  --color-loss: #ff5c6c;
+  --color-amber: #fbbf24;
+
+  /* next/font sets these variables on <html>; the values here are fallbacks. */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+
+  --ease-smooth: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@property --angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --win-rate {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+    background: var(--color-bg);
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: clip;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: #8b5cf666;
+    color: #fff;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #ffffff14;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #a78bfa55;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: wait;
+    opacity: 0.5;
+  }
+  a,
+  button {
+    transition:
+      background 0.2s,
+      border-color 0.2s,
+      color 0.2s,
+      box-shadow 0.25s,
+      transform 0.25s var(--ease-smooth),
+      translate 0.25s var(--ease-smooth),
+      scale 0.25s var(--ease-smooth),
+      rotate 0.25s var(--ease-smooth),
+      opacity 0.2s;
+  }
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid var(--color-violet-2);
+    outline-offset: 3px;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+  }
+  h2 {
+    font-size: 18px;
+    font-weight: 650;
+  }
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+  }
+  small {
+    font-size: 11px;
+  }
+  input[type='date']::-webkit-calendar-picker-indicator {
+    filter: invert(0.75) sepia(0.4) hue-rotate(220deg);
+    cursor: pointer;
+  }
+  select option {
+    background: #14121f;
+  }
+  dialog::backdrop {
+    background: #04040acc;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: fade-in 0.3s both;
+  }
+
+  /* Scroll-reveal driven by useReveal(): [data-reveal] elements fade up once visible. */
+  .reveal-ready [data-reveal] {
+    opacity: 0;
+    transform: translateY(36px);
+    filter: blur(8px);
+    transition:
+      opacity 0.9s var(--ease-smooth),
+      transform 0.9s var(--ease-smooth),
+      filter 0.9s var(--ease-smooth);
+  }
+  .reveal-ready [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+/* ───────── Custom utilities (multi-part effects that can't be single utilities) ───────── */
+
+/* Staggered entrance; set style={{ '--i': n }} for the delay step. */
+@utility rise {
+  animation: rise 0.75s calc(var(--i, 0) * 70ms) var(--ease-smooth) backwards;
+}
+
+@utility gradient-text {
+  background: linear-gradient(100deg, #e9ddff 0%, #a78bfa 40%, #8b5cf6 60%, #22d3ee 110%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Pointer-tracking glow + border highlight. useSpotlight() writes --mx/--my. */
+@utility spotlight {
+  position: relative;
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  &::after {
+    background: radial-gradient(
+      420px circle at var(--mx, -999px) var(--my, -999px),
+      rgba(167, 139, 250, 0.09),
+      transparent 45%
+    );
+  }
+  &::before {
+    padding: 1px;
+    background: radial-gradient(
+      280px circle at var(--mx, -999px) var(--my, -999px),
+      rgba(196, 181, 253, 0.7),
+      transparent 50%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  &:hover::before,
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Tracks the pointer (for --mx/--my) without drawing the spotlight pseudo-elements. */
+@utility spotlight-bare {
+  position: relative;
+  &::before,
+  &::after {
+    display: none;
+  }
+}
+
+/* Wrapper for <Magnetic>: transformed toward the pointer from JS. */
+@utility magnetic {
+  display: inline-block;
+  transition: transform 0.3s var(--ease-smooth);
+}
+
+/* ───────── Keyframes: app ───────── */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotate-angle {
+  to {
+    --angle: 360deg;
+  }
+}
+@keyframes pulse-dot {
+  70% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+}
+@keyframes ambient-drift {
+  to {
+    transform: translate(140px, 90px) scale(1.15);
+  }
+}
+@keyframes spark-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes wave {
+  10%,
+  30% {
+    transform: rotate(14deg);
+  }
+  20%,
+  40% {
+    transform: rotate(-8deg);
+  }
+  50% {
+    transform: none;
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(4px);
+  }
+}
+@keyframes grow-bar {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes shimmer-bg {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+@keyframes float-y {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes shake {
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+}
+@keyframes cell-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
+/* ───────── Keyframes: marketing pages (prefixed lp-) ───────── */
+@keyframes lp-grow-x {
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes lp-shimmer {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+@keyframes lp-drift-a {
+  to {
+    transform: translate(120px, 60px) scale(1.15);
+  }
+}
+@keyframes lp-drift-b {
+  to {
+    transform: translate(-140px, 80px) scale(0.9);
+  }
+}
+@keyframes lp-line-in {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+    filter: blur(14px);
+  }
+}
+@keyframes lp-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+@keyframes lp-sheen {
+  0%,
+  55% {
+    transform: translateX(-120%);
+  }
+  80%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+@keyframes lp-stage-in {
+  from {
+    opacity: 0;
+    transform: translateY(80px);
+  }
+}
+@keyframes lp-breathe {
+  50% {
+    opacity: 0.45;
+    transform: scale(0.96);
+  }
+}
+@keyframes lp-number-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(4px);
+  }
+}
+@keyframes lp-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes lp-ping {
+  from {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  to {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+@keyframes lp-spin-in {
+  from {
+    transform: rotate(-120deg) scale(0.6);
+    opacity: 0;
+  }
+}
+@keyframes lp-pop-in {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+}
+@keyframes lp-float {
+  50% {
+    translate: 0 -12px;
+  }
+}
+@keyframes lp-live {
+  70% {
+    box-shadow: 0 0 0 8px #4ade8000;
+  }
+}
+@keyframes lp-marquee {
+  to {
+    transform: translateX(calc(-50% - 7px));
+  }
+}
+@keyframes lp-cell-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+@keyframes lp-blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes lp-grow-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes lp-chip-cycle {
+  0%,
+  22%,
+  100% {
+    background: #ffffff06;
+    border-color: #ffffff14;
+    color: #b9b6cb;
+    box-shadow: none;
+  }
+  4%,
+  16% {
+    background: #8b5cf6;
+    border-color: #a78bfa;
+    color: #fff;
+    box-shadow: 0 6px 24px #8b5cf666;
+  }
+}
+@keyframes lp-download {
+  from {
+    transform: scaleX(0);
+  }
+  70%,
+  to {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+@keyframes lp-ring {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+@keyframes lp-radar-in {
+  from {
+    transform: scale(0) rotate(-40deg);
+    opacity: 0;
+  }
+}
+@keyframes lp-dot-in {
+  from {
+    transform: scale(0);
+  }
+}
+@keyframes lp-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+@keyframes lp-light-up {
+  to {
+    color: #fff;
+    background: linear-gradient(135deg, #8b5cf6, #4c1d95);
+    border-color: #c4b5fd;
+    box-shadow: 0 0 34px #8b5cf688;
+  }
+}
