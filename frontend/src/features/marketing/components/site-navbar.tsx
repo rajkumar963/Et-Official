@@ -1,20 +1,44 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { ArrowUpRight, ChevronDown, LineChart, Menu, Binary, X } from 'lucide-react';
 import { Brand } from '@/components/ui/brand';
 import type { UserDto } from '@et-trader/shared';
 import { getSessionUser } from '@/features/auth/auth.api';
 import { cn } from '@/lib/cn';
 
+type NavChild = { label: string; href: string; desc: string; icon: typeof Binary };
+type NavItem = {
+  label: string;
+  homeHref?: string;
+  pageHref?: string;
+  children?: NavChild[];
+};
+
 /** `homeHref` is used on the landing page (in-page anchors), `pageHref` everywhere else. */
-const items = [
+const items: NavItem[] = [
   { label: 'Home', homeHref: '/', pageHref: '/' },
   { label: 'Courses', homeHref: '/courses', pageHref: '/courses' },
   { label: 'E-books', homeHref: '/ebooks', pageHref: '/ebooks' },
-  { label: 'Account and Update', homeHref: '#updates', pageHref: '/#updates' },
+  {
+    label: 'Account and Update',
+    children: [
+      {
+        label: 'Binary Trading',
+        href: '/brokers/binary',
+        desc: 'Open a binary account & updates',
+        icon: Binary,
+      },
+      {
+        label: 'Forex Trading',
+        href: '/brokers/forex',
+        desc: 'Open a forex account & updates',
+        icon: LineChart,
+      },
+    ],
+  },
   { label: 'Dashboard', homeHref: '/dashboard', pageHref: '/dashboard' },
   { label: 'Contact Us', homeHref: '/contact', pageHref: '/contact' },
 ];
@@ -37,6 +61,115 @@ const linkBase =
   'relative rounded-[10px] px-[14px] py-2 text-[14px] font-medium text-[#b4b1c6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a78bfa]';
 const linkClosed = 'hover:bg-[#ffffff0a] hover:text-white';
 const linkOpen = 'max-[1020px]:py-[13px] max-[1020px]:text-[15px]';
+
+/** "Account and Update" expands to Binary / Forex. Popover on desktop, inline list in the mobile menu. */
+function NavDropdown({
+  item,
+  pathname,
+  menuOpen,
+  onNavigate,
+}: {
+  item: NavItem;
+  pathname: string;
+  menuOpen: boolean;
+  onNavigate: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const children = item.children ?? [];
+  const anyActive = children.some((c) => pathname.startsWith(c.href));
+
+  useEffect(() => {
+    if (!open) return;
+    const onDocClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    document.addEventListener('mousedown', onDocClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  const panelItems = children.map(({ label, href, desc, icon: Icon }) => {
+    const current = pathname.startsWith(href);
+    return (
+      <Link
+        key={href}
+        href={href}
+        aria-current={current ? 'page' : undefined}
+        onClick={() => {
+          setOpen(false);
+          onNavigate();
+        }}
+        className={cn(
+          'flex items-start gap-3 rounded-[11px] px-3 py-2.5 text-left hover:bg-[#ffffff0a]',
+          current && 'bg-[#ffffff0d]',
+        )}
+      >
+        <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-[9px] border border-[#8b5cf655] bg-[#8b5cf61f] text-violet-2">
+          <Icon size={15} aria-hidden="true" />
+        </span>
+        <span>
+          <span className="block text-[14px] font-semibold text-white">{label}</span>
+          <span className="block text-[12px] text-[#9a97ad]">{desc}</span>
+        </span>
+      </Link>
+    );
+  });
+
+  // Mobile: render inline inside the open menu (no popover).
+  if (menuOpen) {
+    return (
+      <div className="grid gap-1">
+        <span className="px-[14px] pt-2 pb-1 font-mono text-[11px] font-semibold tracking-[0.14em] text-[#6e6b84] uppercase">
+          {item.label}
+        </span>
+        {panelItems}
+      </div>
+    );
+  }
+
+  // Desktop: button + popover.
+  return (
+    <div
+      ref={ref}
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        className={cn(
+          linkBase,
+          linkClosed,
+          'inline-flex items-center gap-1',
+          anyActive && 'bg-[#ffffff0d] text-white',
+        )}
+      >
+        {item.label}
+        <ChevronDown
+          size={15}
+          className={cn('transition-transform duration-200', open && 'rotate-180')}
+          aria-hidden="true"
+        />
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute left-1/2 top-[calc(100%+8px)] z-50 w-[270px] -translate-x-1/2 rounded-[16px] border border-[#ffffff14] bg-[rgba(12,12,21,0.96)] p-2 shadow-[0_18px_50px_#00000080,inset_0_1px_0_#ffffff0d] backdrop-blur-[18px] animate-[lp-rise-in_0.2s_both]"
+        >
+          {panelItems}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function SiteNavbar() {
   const pathname = usePathname();
@@ -80,12 +213,23 @@ export function SiteNavbar() {
           aria-label="Main navigation"
           className={cn(navBase, menuOpen ? navOpen : navClosed)}
         >
-          {items.map(({ label, homeHref, pageHref }) => {
-            const href = isHome ? homeHref : pageHref;
+          {items.map((item) => {
+            if (item.children) {
+              return (
+                <NavDropdown
+                  key={item.label}
+                  item={item}
+                  pathname={pathname}
+                  menuOpen={menuOpen}
+                  onNavigate={() => setMenuOpen(false)}
+                />
+              );
+            }
+            const href = (isHome ? item.homeHref : item.pageHref) ?? '/';
             const current = isActive(pathname, href);
             return (
               <Link
-                key={label}
+                key={item.label}
                 href={href}
                 aria-current={current ? 'page' : undefined}
                 onClick={() => setMenuOpen(false)}
@@ -95,7 +239,7 @@ export function SiteNavbar() {
                   current && 'bg-[#ffffff0d] text-white',
                 )}
               >
-                {label}
+                {item.label}
               </Link>
             );
           })}
