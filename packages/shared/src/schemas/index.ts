@@ -66,13 +66,27 @@ export const tradeQuerySchema = z
     (v) => (v.month === undefined) === (v.year === undefined),
     'Supply month and year together',
   );
-export const startingBalanceSchema = z
+/**
+ * Profile photo: a small, client-resized data URL (data:image/...;base64,...), or an empty
+ * string to remove it. Images are resized on the client before upload, so the cap is generous.
+ */
+export const profileImageSchema = z
+  .string()
+  .max(2_000_000, 'Image is too large — pick a smaller photo')
+  .refine(
+    (v) => v === '' || /^data:image\/(png|jpe?g|webp|gif);base64,/i.test(v),
+    'Unsupported image format',
+  );
+export const profileUpdateSchema = z
   .object({
     name: z.string().trim().min(2).max(80).optional(),
     startingBalance: z.number().finite().min(0).max(1e12).optional(),
+    image: profileImageSchema.optional(),
   })
   .strict()
   .refine((v) => Object.keys(v).length > 0, 'Supply at least one field');
+/** @deprecated use profileUpdateSchema */
+export const startingBalanceSchema = profileUpdateSchema;
 export const idSchema = z.string().regex(/^[a-f0-9]{24}$/i, 'Invalid record ID');
 export type TradeInput = z.infer<typeof tradeCreateSchema>;
 export type TradePatch = z.infer<typeof tradePatchSchema>;

@@ -1,14 +1,16 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-/** Round gradient initials badge (previously .avatar / .avatar.large). */
+/** Round gradient initials badge (previously .avatar / .avatar.large). Shows a photo when given. */
 export function Avatar({
   large = false,
+  image,
   title,
   className,
   children,
 }: {
   large?: boolean;
+  image?: string | null;
   title?: string;
   className?: string;
   children: ReactNode;
@@ -16,13 +18,18 @@ export function Avatar({
   return (
     <span
       className={cn(
-        'inline-grid size-9 place-items-center rounded-full bg-[linear-gradient(135deg,#8b5cf6,#0891b2)] text-[11px] font-bold text-white shadow-[0_0_0_2px_#06060b,0_0_0_3px_#a78bfa55]',
+        'relative inline-grid size-9 place-items-center overflow-hidden rounded-full bg-[linear-gradient(135deg,#8b5cf6,#0891b2)] text-[11px] font-bold text-white shadow-[0_0_0_2px_#06060b,0_0_0_3px_#a78bfa55]',
         large && 'size-[54px] text-[17px]',
         className,
       )}
       title={title}
     >
-      {children}
+      {image ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={image} alt={title ?? 'Profile photo'} className="size-full object-cover" />
+      ) : (
+        children
+      )}
     </span>
   );
 }

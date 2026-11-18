@@ -15,6 +15,7 @@ import {
   PanelLeftClose,
   GraduationCap,
   ShieldCheck,
+  UserRound,
 } from 'lucide-react';
 import { Brand } from '@/components/ui/brand';
 import { Badge, StatusDot } from '@/components/ui/badge';
@@ -40,6 +41,7 @@ const navigation = [
   { name: 'Trades', href: '/dashboard/trades', icon: ListOrdered },
   { name: 'Analytics', href: '/dashboard/analytics', icon: ChartNoAxesCombined },
   { name: 'My courses', href: '/dashboard/courses', icon: GraduationCap },
+  { name: 'Profile', href: '/dashboard/profile', icon: UserRound },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 const greeting = () => {
@@ -212,9 +214,15 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               <Plus size={17} />
               <span className="max-[700px]:hidden">Add Trade</span>
             </button>
-            <Avatar className="max-[900px]:hidden" title={user?.name}>
-              {user?.name.slice(0, 2).toUpperCase() || 'ET'}
-            </Avatar>
+            <Link
+              href="/dashboard/profile"
+              className="rounded-full transition-transform hover:scale-105 max-[900px]:hidden"
+              title="Your profile"
+            >
+              <Avatar image={user?.image} title={user?.name}>
+                {user?.name.slice(0, 2).toUpperCase() || 'ET'}
+              </Avatar>
+            </Link>
             <button
               className={iconButtonClass()}
               title="Sign out"

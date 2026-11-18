@@ -6,7 +6,10 @@ export async function get(userId: string) {
   if (!user) throw new HttpError(401, 'Account no longer exists');
   return userDto(user);
 }
-export async function update(userId: string, data: { name?: string; startingBalance?: number }) {
+export async function update(
+  userId: string,
+  data: { name?: string; startingBalance?: number; image?: string },
+) {
   const user = await repository.update(userId, data);
   if (!user) throw new HttpError(404, 'Account not found');
   return userDto(user);

@@ -8,6 +8,8 @@ export interface UserDto {
   startingBalance: number;
   /** True for accounts listed in the backend's ADMIN_EMAILS. */
   isAdmin: boolean;
+  /** ISO timestamp the account was created ("member since"). */
+  createdAt?: string;
 }
 export interface TradeDto extends TradeInput {
   id: string;

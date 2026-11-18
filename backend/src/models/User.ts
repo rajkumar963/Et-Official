@@ -19,6 +19,7 @@ const schema = new Schema(
 );
 export const User = model('User', schema);
 export function userDto(user: any) {
+  const createdAt = user.get?.('createdAt') ?? user.createdAt;
   return {
     id: String(user._id),
     name: user.name,
@@ -27,6 +28,7 @@ export function userDto(user: any) {
     providers: user.providers,
     startingBalance: user.startingBalance,
     isAdmin: isAdmin(user),
+    createdAt: createdAt ? new Date(createdAt).toISOString() : undefined,
   };
 }
 

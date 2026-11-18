@@ -65,7 +65,9 @@ export function SettingsView() {
               </h2>
               <p>The person behind the process.</p>
             </div>
-            <Avatar large>{user.name.slice(0, 2).toUpperCase()}</Avatar>
+            <Avatar large image={user.image} title={user.name}>
+              {user.name.slice(0, 2).toUpperCase()}
+            </Avatar>
           </PanelHeader>
           <div className={formGrid}>
             <label className={label}>

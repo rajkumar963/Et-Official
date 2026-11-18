@@ -20,9 +20,10 @@ type NavItem = {
 /** `homeHref` is used on the landing page (in-page anchors), `pageHref` everywhere else. */
 const items: NavItem[] = [
   { label: 'Home', homeHref: '/', pageHref: '/' },
+  { label: 'Dashboard', homeHref: '/dashboard', pageHref: '/dashboard' },
   { label: 'Courses', homeHref: '/courses', pageHref: '/courses' },
   { label: 'E-books', homeHref: '/ebooks', pageHref: '/ebooks' },
-  {
+   {
     label: 'Account and Update',
     children: [
       {
@@ -39,7 +40,6 @@ const items: NavItem[] = [
       },
     ],
   },
-  { label: 'Dashboard', homeHref: '/dashboard', pageHref: '/dashboard' },
   { label: 'Contact Us', homeHref: '/contact', pageHref: '/contact' },
 ];
 

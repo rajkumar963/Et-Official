@@ -21,7 +21,7 @@ import {
 } from '@/features/marketing/components/course-info';
 import { gradientText, home, sectionLabel } from '@/features/marketing/marketing-styles';
 import { cn } from '@/lib/cn';
-import { telegram, updates, type BrokerPageData, type Broker, type Update } from './data';
+import { binaryTelegram, telegram, updates, type BrokerPageData, type Broker, type Update } from './data';
 
 const footerLink = 'inline-flex items-center gap-2 font-semibold text-[#d4c8ff] hover:text-white';
 
@@ -122,6 +122,7 @@ function UpdateCard({ update }: { update: Update }) {
 export function BrokerPage({ data }: { data: BrokerPageData }) {
   const otherHref = data.kind === 'binary' ? '/brokers/forex' : '/brokers/binary';
   const otherLabel = data.kind === 'binary' ? 'Forex trading' : 'Binary trading';
+  const telegramChannel = data.kind === 'binary' ? binaryTelegram : telegram;
 
   return (
     <div className={home}>
@@ -181,7 +182,7 @@ export function BrokerPage({ data }: { data: BrokerPageData }) {
 
             {/* Telegram channel CTA */}
             <a
-              href={telegram.url}
+              href={telegramChannel.url}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
@@ -195,7 +196,7 @@ export function BrokerPage({ data }: { data: BrokerPageData }) {
                 </span>
                 <span>
                   <span className="block font-display text-[16px] tracking-[-0.01em] text-white">
-                    Join our Telegram — {telegram.handle}
+                    Join our Telegram — {telegramChannel.handle}
                   </span>
                   <span className="block text-[13px] text-[#a09db4]">
                     Live updates, signals and announcements before anyone else.

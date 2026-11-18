@@ -40,6 +40,11 @@ export const telegram = {
   handle: 'ET GOLD KING',
 };
 
+export const binaryTelegram = {
+  url: 'https://t.me/tradewithet',
+  handle: '@tradewithet',
+};
+
 export type BrokerPageData = {
   kind: BrokerKind;
   eyebrow: string;
