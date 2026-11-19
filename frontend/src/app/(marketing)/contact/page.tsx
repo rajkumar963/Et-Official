@@ -13,7 +13,7 @@ import { cn } from '@/lib/cn';
 
 export const metadata: Metadata = {
   title: 'Contact Us',
-  description: 'Contact ET Trader about the trading journal, courses, or e-books.',
+  description: 'Contact ET Official about the trading journal, courses, or e-books.',
 };
 
 const channels = [

@@ -21,7 +21,7 @@ export function ContactSection() {
             Let&apos;s talk about <span className={gradientText}>your next step.</span>
           </h2>
           <p className="mt-[9px] max-w-[620px] text-[13px] leading-[1.65] text-[#a09db4]">
-            Questions about ET Trader, the courses, or the e-books? Send us a message from our
+            Questions about ET Official, the courses, or the e-books? Send us a message from our
             contact page.
           </p>
         </div>

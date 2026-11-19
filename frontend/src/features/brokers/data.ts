@@ -67,7 +67,7 @@ const openAccountSteps = [
   },
   {
     title: 'Journal every trade',
-    text: 'Come back to your ET Trader dashboard and log each trade. Your analytics build the discipline that actually moves results.',
+    text: 'Come back to your ET Official dashboard and log each trade. Your analytics build the discipline that actually moves results.',
   },
 ];
 
@@ -80,7 +80,7 @@ export const binaryPage: BrokerPageData = {
   title: 'Open a binary trading account',
   titleAccent: 'with a broker we trust.',
   intro:
-    'Fixed-payout trading on short time frames. Create your account through our partner link below, then track every trade in your ET Trader journal to see what’s really working.',
+    'Fixed-payout trading on short time frames. Create your account through our partner link below, then track every trade in your ET Official journal to see what’s really working.',
   brokers: [
     {
       name: 'Quotex',
@@ -132,14 +132,14 @@ export const forexPage: BrokerPageData = {
   title: 'Open a forex trading account',
   titleAccent: 'with our partner brokers.',
   intro:
-    'Trade currency pairs, metals and more. Create your account through our partner link below, then log every position in your ET Trader journal to sharpen your edge over time.',
+    'Trade currency pairs, metals and more. Create your account through our partner link below, then log every position in your ET Official journal to sharpen your edge over time.',
   brokers: [
     {
       // ▶ TODO: confirm the broker name for the affs.click link (tell Claude / edit here).
       name: 'Partner Forex Broker',
       tagline: 'Our recommended forex partner',
       description:
-        'Our featured forex partner — open your account through the link, then track every position in your ET Trader journal. Always verify the broker’s terms and your local regulations before funding.',
+        'Our featured forex partner — open your account through the link, then track every position in your ET Official journal. Always verify the broker’s terms and your local regulations before funding.',
       highlights: ['Forex & CFDs', 'Partner sign-up link', 'Demo to practice', 'Trade from mobile'],
       minDeposit: '—',
       badge: 'Recommended',
@@ -191,7 +191,7 @@ export const updates: Update[] = [
   {
     date: '2026-11-10',
     title: 'Always trade with risk management',
-    text: 'Never risk more than a small percentage of your capital on a single trade. Use the ET Trader journal to review your discipline every week.',
+    text: 'Never risk more than a small percentage of your capital on a single trade. Use the ET Official journal to review your discipline every week.',
     tone: 'info',
     tag: 'Tip',
   },

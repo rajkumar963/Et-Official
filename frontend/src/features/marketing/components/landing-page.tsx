@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import {
@@ -21,6 +22,9 @@ import { FeaturesSection, displayHeading } from './landing-features';
 import { CountUp, Magnetic, useReveal, useSpotlight } from '@/components/effects/motion';
 import { gradientText, home, sectionLabel } from '@/features/marketing/marketing-styles';
 import { cn } from '@/lib/cn';
+import type { AnalyticsSummary } from '@et-trader/shared';
+import { API_URL } from '@/config/env';
+import { getSessionUser } from '@/features/auth/auth.api';
 
 const marketsTop = [
   'Stocks',
@@ -52,7 +56,7 @@ const radarPoints = [
 ];
 
 const fmtMoney = (n: number) =>
-  `+$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  `${n > 0 ? '+' : n < 0 ? '−' : ''}$${Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 /** Original kicker used the `font` shorthand, which also reset line-height to normal. */
 const kicker = `${sectionLabel} leading-[normal]`;
@@ -64,7 +68,127 @@ const learningText = 'mx-auto mt-[18px] max-w-[590px] text-[16px] leading-[1.7] 
 const marqueeMask =
   'group overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]';
 const metricValue =
-  'bg-clip-text font-mono text-[length:clamp(30px,3.6vw,48px)] leading-none font-bold tracking-[-0.05em] text-transparent';
+  'block bg-clip-text font-mono text-[length:clamp(28px,3.2vw,44px)] leading-[1.12] font-bold tracking-[-0.05em] text-transparent';
+
+const sampleMetrics = [
+  { label: 'Net P&L', value: 4820.5, format: fmtMoney, green: true },
+  { label: 'Win rate', value: 68.4, format: (n: number) => `${n.toFixed(1)}%`, green: false },
+  { label: 'Profit factor', value: 2.41, format: (n: number) => n.toFixed(2), green: false },
+  { label: 'Trades journaled', value: 142, format: (n: number) => Math.round(n).toString(), green: false },
+];
+
+function PerformanceSnapshot() {
+  const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
+  const [checked, setChecked] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    let timer: number | undefined;
+
+    const refresh = async () => {
+      const user = await getSessionUser();
+      if (!user) {
+        if (mounted) {
+          setSignedIn(false);
+          setChecked(true);
+        }
+        return false;
+      }
+      if (mounted) setSignedIn(true);
+      try {
+        const response = await fetch(`${API_URL}/analytics/summary`, {
+          credentials: 'include',
+          cache: 'no-store',
+        });
+        if (!response.ok) return true;
+        const result = (await response.json()) as { data: AnalyticsSummary };
+        if (mounted) {
+          setSummary(result.data);
+          setChecked(true);
+        }
+      } catch {
+        if (mounted) setChecked(true);
+      }
+      return true;
+    };
+
+    void refresh().then((signedIn) => {
+      if (signedIn && mounted) timer = window.setInterval(() => void refresh(), 30_000);
+    });
+    return () => {
+      mounted = false;
+      if (timer !== undefined) window.clearInterval(timer);
+    };
+  }, []);
+
+  const metrics = summary
+    ? [
+        { label: 'Net P&L', value: summary.totalPnl, format: fmtMoney, green: summary.totalPnl >= 0 },
+        { label: 'Win rate', value: summary.winRate, format: (n: number) => `${n.toFixed(1)}%`, green: false },
+        {
+          label: 'Profit factor',
+          value: summary.profitFactor ?? 0,
+          format: (n: number) => summary.profitFactor === null ? '—' : n.toFixed(2),
+          green: false,
+        },
+        { label: 'Trades journaled', value: summary.totalTrades, format: (n: number) => Math.round(n).toString(), green: false },
+      ]
+    : sampleMetrics;
+
+  return (
+    <section className="mx-auto max-w-[1240px] px-6 pt-5 pb-10 text-center max-[760px]:px-[18px]" aria-label="Trading performance snapshot">
+      <div className="overflow-hidden rounded-[24px] border border-[#ffffff12] bg-[radial-gradient(70%_150%_at_50%_0%,#8b5cf61c,transparent_72%),linear-gradient(180deg,#11111bcc,#090910e8)] shadow-[0_20px_65px_#00000040,inset_0_1px_0_#ffffff0b]" data-reveal>
+        <div className="flex items-center justify-between gap-4 border-b border-[#ffffff0c] px-7 py-4 text-left max-[560px]:px-4">
+          <span className="font-mono text-[10px] font-semibold tracking-[0.16em] text-[#9d99b3] uppercase">Performance snapshot</span>
+          {summary ? (
+            <span className="inline-flex items-center gap-2 font-mono text-[10px] font-semibold tracking-[0.12em] text-[#86efac] uppercase">
+              <span className="size-1.5 animate-pulse rounded-full bg-[#4ade80]" /> Live journal
+            </span>
+          ) : (
+            <span className="font-mono text-[10px] tracking-[0.1em] text-[#77748c] uppercase">
+              {checked ? (signedIn ? 'Journal unavailable' : 'Sample preview') : 'Loading your journal…'}
+            </span>
+          )}
+        </div>
+        <div className="grid grid-cols-4 max-[760px]:grid-cols-2">
+          {metrics.map((m, i) => (
+            <div
+              key={m.label}
+              className={cn(
+                'flex min-w-0 flex-col items-center justify-center gap-2 px-4 py-8 max-[560px]:px-2 max-[560px]:py-6',
+                i > 0 && 'border-l border-[#ffffff0c]',
+                i === 2 && 'max-[760px]:border-l-0',
+                i >= 2 && 'max-[760px]:border-t border-[#ffffff0c]',
+              )}
+            >
+              <CountUp
+                value={m.value}
+                format={m.format}
+                duration={1800}
+                className={cn(
+                  metricValue,
+                  m.green
+                    ? 'bg-[linear-gradient(180deg,#86efac,#22c55e)]'
+                    : 'bg-[linear-gradient(180deg,#fff,#b8b0d8)]',
+                  summary && m.label === 'Net P&L' && summary.totalPnl < 0 && 'bg-[linear-gradient(180deg,#fda4af,#fb7185)]',
+                )}
+              />
+              <span className="text-[12px] font-medium text-[#9692aa]">{m.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <small className="mt-3 block font-mono text-[10px] leading-normal tracking-[0.08em] text-[#6e6b84]">
+        {summary
+          ? 'Your personal journal · lifetime totals · refreshes automatically'
+          : signedIn
+            ? 'Example data shown · reconnect to load your live journal stats'
+            : 'Illustrative sample month · sign in to see your live journal stats'}
+      </small>
+    </section>
+  );
+}
 
 export function LandingPage() {
   const page = useReveal<HTMLDivElement>();
@@ -135,63 +259,7 @@ export function LandingPage() {
           <LearningSectionLinks />
         </section>
 
-        <section
-          className="relative px-6 pt-5 pb-10 text-center"
-          aria-label="Sample month in numbers"
-        >
-          <div
-            className="mx-auto grid max-w-[1240px] grid-cols-4 overflow-hidden rounded-[26px] border border-[#ffffff10] [background:radial-gradient(60%_120%_at_50%_0%,#8b5cf61a,transparent_70%),linear-gradient(180deg,#ffffff06,#ffffff01)] max-[860px]:grid-cols-[1fr_1fr]"
-            data-reveal
-          >
-            {[
-              { label: 'Net P&L', value: 4820.5, format: fmtMoney, green: true },
-              {
-                label: 'Win rate',
-                value: 68.4,
-                format: (n: number) => `${n.toFixed(1)}%`,
-                green: false,
-              },
-              {
-                label: 'Profit factor',
-                value: 2.41,
-                format: (n: number) => n.toFixed(2),
-                green: false,
-              },
-              {
-                label: 'Trades journaled',
-                value: 142,
-                format: (n: number) => Math.round(n).toString(),
-                green: false,
-              },
-            ].map((m, i) => (
-              <div
-                key={m.label}
-                className={cn(
-                  'flex flex-col gap-[10px] border-[#ffffff0c] px-5 py-[42px] max-[560px]:px-3 max-[560px]:py-7',
-                  i > 0 && 'border-l',
-                  i === 2 && 'max-[860px]:border-l-0',
-                  i >= 2 && 'max-[860px]:border-t',
-                )}
-              >
-                <CountUp
-                  value={m.value}
-                  format={m.format}
-                  duration={1800}
-                  className={cn(
-                    metricValue,
-                    m.green
-                      ? 'bg-[linear-gradient(180deg,#86efac,#22c55e)]'
-                      : 'bg-[linear-gradient(180deg,#fff,#b8b0d8)]',
-                  )}
-                />
-                <span className="text-[13px] text-[#8f8ca5]">{m.label}</span>
-              </div>
-            ))}
-          </div>
-          <small className="mt-[14px] block font-mono text-[10px] leading-[normal] tracking-[0.12em] text-[#5d5a72] uppercase">
-            Illustrative sample month
-          </small>
-        </section>
+        <PerformanceSnapshot />
 
         <section
           className="mx-auto grid max-w-[1240px] scroll-mt-[100px] grid-cols-[1fr_1fr] items-center gap-20 px-6 py-[130px] max-[1100px]:grid-cols-[1fr] max-[1100px]:gap-[50px] max-[860px]:px-[18px] max-[860px]:py-[90px]"

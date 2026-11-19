@@ -267,7 +267,7 @@ export function TradeTable({ trades, compact = false }: { trades: TradeDto[]; co
               onClick={async () => {
                 try {
                   await navigator.clipboard.writeText(
-                    `${inspecting.symbol} | ${inspecting.side.toUpperCase()} | ${signedMoney(inspecting.pnl)} | ${inspecting.date} — ET Trader`,
+                    `${inspecting.symbol} | ${inspecting.side.toUpperCase()} | ${signedMoney(inspecting.pnl)} | ${inspecting.date} — ET Official`,
                   );
                   setShared(true);
                 } catch {

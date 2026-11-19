@@ -23,7 +23,7 @@ const items: NavItem[] = [
   { label: 'Dashboard', homeHref: '/dashboard', pageHref: '/dashboard' },
   { label: 'Courses', homeHref: '/courses', pageHref: '/courses' },
   { label: 'E-books', homeHref: '/ebooks', pageHref: '/ebooks' },
-   {
+  {
     label: 'Account and Update',
     children: [
       {
@@ -48,19 +48,19 @@ const isActive = (pathname: string, href: string) =>
     ? pathname === '/'
     : href.startsWith('/') && !href.includes('#') && pathname.startsWith(href);
 
-/** Below 1020px the inline links collapse into the menu-button dropdown. */
-const navBase = 'mx-auto flex gap-1.5';
-const navClosed = 'max-[1020px]:hidden';
+/** Below 1120px the inline links collapse into the menu-button dropdown. */
+const navBase = 'flex min-w-0 flex-1 items-center justify-center gap-1';
+const navClosed = 'max-[1120px]:hidden';
 const navOpen =
-  'max-[1020px]:absolute max-[1020px]:inset-x-[14px] max-[1020px]:top-[calc(100%-4px)] max-[1020px]:flex-col max-[1020px]:rounded-[16px] max-[1020px]:border max-[1020px]:border-[#ffffff14] max-[1020px]:bg-[rgba(12,12,21,0.94)] max-[1020px]:p-[10px] max-[1020px]:backdrop-blur-[18px] max-[1020px]:animate-[lp-rise-in_0.3s_both]';
+  'max-[1120px]:absolute max-[1120px]:inset-x-[14px] max-[1120px]:top-[calc(100%-4px)] max-[1120px]:flex-col max-[1120px]:rounded-[16px] max-[1120px]:border max-[1120px]:border-[#ffffff14] max-[1120px]:bg-[rgba(12,12,21,0.94)] max-[1120px]:p-[10px] max-[1120px]:backdrop-blur-[18px] max-[1120px]:animate-[lp-rise-in_0.3s_both]';
 
 const ctaClass =
-  'inline-flex items-center gap-1.5 rounded-[11px] bg-[linear-gradient(180deg,#fff,#ddd5f7)] px-4 py-[10px] text-[14px] font-semibold text-[#0b0716] shadow-[inset_0_0_0_1px_#ffffff40,0_8px_26px_#8b5cf640] hover:-translate-y-px hover:shadow-[inset_0_0_0_1px_#ffffff60,0_12px_32px_#8b5cf670] max-[560px]:px-[13px] max-[560px]:py-[9px] max-[560px]:text-[13px]';
+  'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[11px] bg-[linear-gradient(110deg,#6d28d9,#8b5cf6)] px-4 py-[10px] text-[14px] font-semibold text-white shadow-[inset_0_0_0_1px_#ffffff24,0_8px_26px_#8b5cf640] transition-[transform,box-shadow,filter] hover:-translate-y-px hover:brightness-110 hover:shadow-[inset_0_0_0_1px_#ffffff40,0_12px_32px_#8b5cf670] max-[560px]:px-[11px] max-[560px]:py-[9px] max-[560px]:text-[12px]';
 
 const linkBase =
-  'relative rounded-[10px] px-[14px] py-2 text-[14px] font-medium text-[#b4b1c6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a78bfa]';
+  'relative whitespace-nowrap rounded-[10px] px-3 py-[9px] text-[14px] font-medium text-[#b4b1c6] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a78bfa]';
 const linkClosed = 'hover:bg-[#ffffff0a] hover:text-white';
-const linkOpen = 'max-[1020px]:py-[13px] max-[1020px]:text-[15px]';
+const linkOpen = 'max-[1120px]:py-[13px] max-[1120px]:text-[15px]';
 
 /** "Account and Update" expands to Binary / Forex. Popover on desktop, inline list in the mobile menu. */
 function NavDropdown({
@@ -149,7 +149,7 @@ function NavDropdown({
           linkBase,
           linkClosed,
           'inline-flex items-center gap-1',
-          anyActive && 'bg-[#ffffff0d] text-white',
+          anyActive && 'bg-[#8b5cf61a] text-white shadow-[inset_0_0_0_1px_#8b5cf633]',
         )}
       >
         {item.label}
@@ -202,9 +202,9 @@ export function SiteNavbar() {
     >
       <div
         className={cn(
-          'mx-auto flex max-w-[1240px] items-center gap-6 rounded-[18px] border border-transparent py-[10px] pr-3 pl-[18px] [transition:background_0.4s,border-color_0.4s,box-shadow_0.4s,max-width_0.5s]',
+          'mx-auto flex max-w-[1240px] items-center gap-3 rounded-[18px] border border-[#ffffff12] bg-[rgba(12,12,21,0.78)] py-[10px] pr-3 pl-[14px] shadow-[0_12px_40px_#00000045,inset_0_1px_0_#ffffff0d] backdrop-blur-[18px] backdrop-saturate-[150%] [transition:background_0.4s,border-color_0.4s,box-shadow_0.4s,max-width_0.5s]',
           scrolled &&
-            'max-w-[1080px] border-[#ffffff14] bg-[rgba(12,12,21,0.72)] shadow-[0_12px_40px_#00000066,inset_0_1px_0_#ffffff0d] backdrop-blur-[18px] backdrop-saturate-[160%]',
+            'border-[#ffffff1c] bg-[rgba(12,12,21,0.9)] shadow-[0_14px_46px_#00000070,inset_0_1px_0_#ffffff12]',
         )}
       >
         <Brand />
@@ -236,7 +236,7 @@ export function SiteNavbar() {
                 className={cn(
                   linkBase,
                   menuOpen ? linkOpen : linkClosed,
-                  current && 'bg-[#ffffff0d] text-white',
+                  current && 'bg-[#8b5cf61a] text-white shadow-[inset_0_0_0_1px_#8b5cf633]',
                 )}
               >
                 {item.label}
@@ -244,7 +244,7 @@ export function SiteNavbar() {
             );
           })}
         </nav>
-        <div className="flex items-center gap-2 max-[1020px]:ml-auto">
+        <div className="flex items-center gap-2 max-[1120px]:ml-auto">
           {user ? (
             <>
               <span
@@ -280,7 +280,7 @@ export function SiteNavbar() {
             </>
           )}
           <button
-            className="hidden size-10 items-center justify-center rounded-[10px] border border-[#ffffff14] bg-[#ffffff08] text-white max-[1020px]:inline-flex"
+            className="hidden size-10 items-center justify-center rounded-[10px] border border-[#ffffff14] bg-[#ffffff08] text-white max-[1120px]:inline-flex"
             aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
             aria-expanded={menuOpen}
             aria-controls="site-navigation"

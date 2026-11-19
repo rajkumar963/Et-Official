@@ -165,7 +165,7 @@ export function LandingHero() {
             'animate-[lp-rise-in_1s_0.4s_var(--ease-smooth)_both]',
           )}
         >
-          Good traders track results. Great traders understand them. ET Trader turns every execution
+          Good traders track results. Great traders understand them. ET Official turns every execution
           into a living picture of your edge — calendar, analytics and behavior, in one beautiful
           workspace.
         </p>

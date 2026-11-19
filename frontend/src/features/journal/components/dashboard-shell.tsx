@@ -277,7 +277,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
           )}
         </main>
         <footer className="flex justify-between border-t border-line px-[30px] py-[18px] text-[10.5px] text-[#5d586f] max-[700px]:px-4 max-[700px]:py-[15px]">
-          <span>ET Trader · Built for the process.</span>
+          <span>ET Official · Built for the process.</span>
           <span className={cn(mono, 'max-[700px]:hidden')}>Reflect. Refine. Repeat.</span>
         </footer>
       </div>

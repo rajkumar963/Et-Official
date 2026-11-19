@@ -166,7 +166,7 @@ export function AdminShell({
                 {pageTitle(path)}
               </strong>
               <small className="mt-0.5 block text-[11.5px] text-muted max-[700px]:text-[10px]">
-                ET Trader admin
+                ET Official admin
               </small>
             </div>
           </div>
@@ -205,7 +205,7 @@ export function AdminShell({
           </div>
         </main>
         <footer className="flex justify-between border-t border-line px-[30px] py-[18px] text-[10.5px] text-[#5d586f] max-[700px]:px-4 max-[700px]:py-[15px]">
-          <span>ET Trader · Admin</span>
+          <span>ET Official · Admin</span>
           <span className={cn(mono, 'max-[700px]:hidden')}>Verify. Approve. Deliver.</span>
         </footer>
       </div>

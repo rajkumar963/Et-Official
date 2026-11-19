@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
+import { site } from '@/config/site';
 import './globals.css';
 
 const sans = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
@@ -7,12 +8,44 @@ const display = Space_Grotesk({ subsets: ['latin'], variable: '--font-display', 
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
   title: {
-    default: 'ET Trader - Journal your trades. See your edge.',
-    template: '%s | ET Trader',
+    default: `${site.name} — ${site.tagline}`,
+    template: `%s | ${site.name}`,
   },
-  description:
-    'A focused trading journal to track your performance, understand your behavior, and build a better process.',
+  description: site.description,
+  keywords: [...site.keywords],
+  applicationName: site.name,
+  authors: [{ name: site.name, url: site.url }],
+  creator: site.name,
+  publisher: site.name,
+  icons: {
+    icon: '/brand-logo.jpg',
+    apple: '/brand-logo.jpg',
+  },
+  alternates: { canonical: '/' },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+  },
+  openGraph: {
+    type: 'website',
+    siteName: site.name,
+    title: `${site.name} — ${site.tagline}`,
+    description: site.description,
+    url: site.url,
+    locale: 'en_US',
+    images: ['/brand-logo.jpg'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${site.name} — ${site.tagline}`,
+    description: site.description,
+    site: site.twitter,
+    creator: site.twitter,
+  },
+  category: 'finance',
 };
 export const viewport: Viewport = { themeColor: '#06060b' };
 export default function RootLayout({ children }: { children: React.ReactNode }) {

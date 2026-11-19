@@ -6,7 +6,7 @@ import { API_URL } from '@/config/env';
 import { AdminShell } from '@/features/admin/components/admin-shell';
 
 export const metadata: Metadata = {
-  title: { default: 'Admin', template: '%s · Admin | ET Trader' },
+  title: { default: 'Admin', template: '%s · Admin | ET Official' },
   robots: { index: false, follow: false },
 };
 

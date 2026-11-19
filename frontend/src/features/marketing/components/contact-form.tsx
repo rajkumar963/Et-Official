@@ -28,7 +28,7 @@ export function ContactForm({
     }
 
     const values = new FormData(event.currentTarget);
-    const subject = encodeURIComponent(`ET Trader enquiry: ${values.get('topic')}`);
+    const subject = encodeURIComponent(`ET Official enquiry: ${values.get('topic')}`);
     const body = encodeURIComponent(
       `Name: ${values.get('name')}\nEmail: ${values.get('email')}\n\n${values.get('message')}`,
     );

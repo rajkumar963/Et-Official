@@ -109,7 +109,7 @@ export function AuthForm({ signup = false }: { signup?: boolean }) {
           </div>
         </div>
         <small className="relative text-muted max-[700px]:hidden">
-          ET Trader · Reflect. Refine. Repeat.
+          ET Official · Reflect. Refine. Repeat.
         </small>
       </div>
       <div className="relative flex items-center justify-center px-[35px] py-[60px] before:absolute before:inset-0 before:-z-1 before:bg-[radial-gradient(#ffffff0e_1px,transparent_1px)] before:bg-[length:24px_24px] before:[mask-image:radial-gradient(ellipse_at_center,#000,transparent_70%)] before:content-[''] max-[900px]:px-[22px] max-[900px]:py-10 max-[700px]:items-start max-[700px]:px-4 max-[700px]:pt-2.5 max-[700px]:pb-[50px]">
@@ -222,7 +222,7 @@ export function AuthForm({ signup = false }: { signup?: boolean }) {
             </button>
           </form>
           <p className="mt-[22px] text-center text-[13px] text-[#8a789b]">
-            {signup ? 'Already have an account?' : 'New to ET Trader?'}{' '}
+            {signup ? 'Already have an account?' : 'New to ET Official?'}{' '}
             <Link
               href={signup ? '/login' : '/signup'}
               className="ml-1 font-semibold text-violet-3 hover:text-white"

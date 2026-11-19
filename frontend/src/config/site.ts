@@ -1,3 +1,25 @@
+/** Central brand + site configuration. Keep user-facing name and domain in one place. */
+export const site = {
+  name: 'ET Official',
+  /** Production domain. Used for canonical URLs, Open Graph, sitemap and robots. */
+  url: 'https://etofficial.com',
+  tagline: 'Journal your trades. See your edge.',
+  description:
+    'ET Official is a focused trading journal to track your performance, understand your behavior, and build a better process — plus trading courses and e-books to sharpen your edge.',
+  /** Used for Twitter/X cards. Update if you create a handle. */
+  twitter: '@etofficial',
+  keywords: [
+    'trading journal',
+    'trade tracker',
+    'forex journal',
+    'binary trading',
+    'trading analytics',
+    'trading courses',
+    'trading e-books',
+    'ET Official',
+  ],
+} as const;
+
 /**
  * Public business/contact details shown on marketing pages.
  * Keep these in one place so links and displayed labels can't drift apart.
@@ -11,7 +33,10 @@ export const contactChannels = {
   whatsapp: { label: '+91 1234567890', href: 'https://wa.me/1234567890' },
   telegramCommunity: { label: 'Telegram Community', href: 'https://t.me/tradewithet' },
   telegramPersonal: { label: '@EngineerTrader84', href: 'https://t.me/EngineerTrader84' },
-  youtube: { label: 'Engineer Trader on YouTube', href: 'https://www.youtube.com/@EngineerTraderofficial' },
+  youtube: {
+    label: 'Engineer Trader on YouTube',
+    href: 'https://www.youtube.com/@EngineerTraderofficial',
+  },
   email: { label: 'ettrader@gmail.com', href: 'mailto:techforexvip@gmail.com' },
   location: { label: 'India', href: 'https://maps.google.com/?q=Dubai%2C+U.A.E' },
 } as const;

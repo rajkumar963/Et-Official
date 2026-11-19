@@ -110,11 +110,20 @@ const activeStatuses = ['awaiting_payment', 'submitted', 'approved'];
 export async function checkoutConfig(userId: string, productId: string): Promise<CheckoutConfig> {
   const product = getProduct(productId);
   if (!product) throw new HttpError(404, 'This product does not exist.');
-  const existing = await Order.findOne({
+  let existing = await Order.findOne({
     userId,
     productId,
     status: { $in: activeStatuses },
   }).sort({ createdAt: -1 });
+  // Keep an unpaid order aligned with the currently configured wallet. This also
+  // repairs orders created before a receiving address was corrected.
+  if (existing?.status === 'awaiting_payment') {
+    const currentAddress = walletAddress(existing.network);
+    if (currentAddress && existing.walletAddress !== currentAddress) {
+      existing.walletAddress = currentAddress;
+      existing = await existing.save();
+    }
+  }
   return {
     product,
     networks: availableNetworks(),

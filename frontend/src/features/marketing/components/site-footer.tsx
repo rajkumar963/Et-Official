@@ -52,7 +52,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-8 flex justify-between gap-4 border-t border-white/[0.07] pt-5 text-[12px] text-[#77748c] max-[560px]:flex-col">
-          <span>Copyright © {new Date().getFullYear()} ET Trader.</span>
+          <span>Copyright © {new Date().getFullYear()} ET Official.</span>
           <span>Reflect. Refine. Repeat.</span>
         </div>
       </div>

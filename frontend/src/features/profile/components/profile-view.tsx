@@ -291,7 +291,7 @@ export function ProfileView() {
               </span>
               Your courses &amp; e-books
             </h2>
-            <p>Everything you’ve unlocked on ET Trader.</p>
+            <p>Everything you’ve unlocked on ET Official.</p>
           </div>
           <Link href="/dashboard/courses" className={buttonClass({ variant: 'secondary', size: 'sm' })}>
             View all <ArrowRight size={15} />
