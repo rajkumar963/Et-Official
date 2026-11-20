@@ -18,7 +18,7 @@ app.disable('x-powered-by');
 // Behind proxies, use X-Forwarded-For so rate limits apply per visitor, not per proxy.
 if (env.TRUST_PROXY > 0) app.set('trust proxy', env.TRUST_PROXY);
 app.use(helmet());
-app.use(cors({ origin: env.FRONTEND_URL, credentials: true }));
+app.use(cors({ origin: env.FRONTEND_ORIGINS, credentials: true }));
 app.use(express.json({ limit: '64kb' }));
 app.use(cookieParser());
 app.use(checkOrigin);
