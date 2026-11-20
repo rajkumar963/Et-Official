@@ -60,6 +60,9 @@ export async function startVerification(
   const token = randomBytes(32).toString('hex');
   const code = newCode();
   const now = new Date();
+  // Send first: if delivery fails, throw *before* persisting the challenge or starting the cooldown,
+  // so no dangling challenge / stale "wait Ns" state is left behind and the user can retry cleanly.
+  await sendEmail(verificationEmail(user.email, user.name, code, CODE_MINUTES));
   await EmailChallenge.findOneAndUpdate(
     { userId: user._id },
     {
@@ -76,7 +79,6 @@ export async function startVerification(
     },
     { upsert: true, new: true, setDefaultsOnInsert: true },
   );
-  await sendEmail(verificationEmail(user.email, user.name, code, CODE_MINUTES));
   setChallengeCookie(res, token);
   return { status: 'verification_required' as const, email: maskEmail(user.email) };
 }
@@ -105,7 +107,11 @@ export async function resendCode(req: Request) {
   const challenge = await challengeFrom(req);
   if (!challenge) throw new HttpError(404, 'No verification in progress. Please sign in again.');
   assertCanSend(challenge);
+  const user = await User.findById(challenge.userId);
+  if (!user) throw new HttpError(404, 'This account no longer exists.');
   const code = newCode();
+  // Send before persisting so a failed send doesn't start the cooldown or invalidate the current code.
+  await sendEmail(verificationEmail(challenge.email, user.name, code, CODE_MINUTES));
   const windowOpen = Date.now() - challenge.windowStartedAt.getTime() < 3_600_000;
   challenge.codeHash = hmac(code);
   challenge.codeExpiresAt = minutesFromNow(CODE_MINUTES);
@@ -115,9 +121,6 @@ export async function resendCode(req: Request) {
   if (!windowOpen) challenge.windowStartedAt = new Date();
   challenge.expiresAt = minutesFromNow(CHALLENGE_MINUTES);
   await challenge.save();
-  const user = await User.findById(challenge.userId);
-  if (!user) throw new HttpError(404, 'This account no longer exists.');
-  await sendEmail(verificationEmail(challenge.email, user.name, code, CODE_MINUTES));
   return verificationStatus(req);
 }
 
