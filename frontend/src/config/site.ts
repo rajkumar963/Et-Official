@@ -40,6 +40,7 @@ export const contactChannels = {
     label: 'Engineer Trader on YouTube',
     href: 'https://www.youtube.com/@EngineerTraderofficial',
   },
+  instagram: { label: '@officialetzone', href: 'https://www.instagram.com/officialetzone' },
   email: { label: 'ettrader@gmail.com', href: 'mailto:techforexvip@gmail.com' },
   location: { label: 'India', href: 'https://maps.google.com/?q=Dubai%2C+U.A.E' },
 } as const;

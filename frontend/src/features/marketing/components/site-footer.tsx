@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { MessageCircle, MoveUpRight, Send, Youtube } from 'lucide-react';
+import { Instagram, MoveUpRight, Send, Youtube } from 'lucide-react';
 import { Brand } from '@/components/ui/brand';
 import { contactChannels } from '@/config/site';
 
@@ -45,8 +45,8 @@ export function SiteFooter() {
             {/* <a href={contactChannels.telegramPersonal.href} target="_blank" rel="noreferrer" className={socialLink}>
               <Send size={15} className="text-sky-300" /> Telegram contact
             </a> */}
-            <a href={contactChannels.whatsapp.href} target="_blank" rel="noreferrer" className={socialLink}>
-              <MessageCircle size={16} className="text-emerald-300" /> Instagram
+            <a href={contactChannels.instagram.href} target="_blank" rel="noreferrer" className={socialLink}>
+              <Instagram size={16} className="text-pink-300" /> Instagram
             </a>
           </nav>
         </div>
