@@ -7,11 +7,26 @@ const schema = z.object({
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
   /** Canonical frontend URL used in emails and OAuth redirects. */
   FRONTEND_URL: z.url().default('https://www.etofficial.com'),
-  /** Allowed browser origins for CORS and the CSRF origin check. */
+  /** Allowed browser origins for CORS and the CSRF origin check.
+   *  Each configured origin also implicitly allows its www/apex sibling (same site, same owner),
+   *  so forgetting the "www." (or the apex) in this list can never block real visitors. */
   FRONTEND_ORIGINS: z
     .string()
     .default('https://www.etofficial.com,https://etofficial.com')
-    .transform((value) => value.split(',').map((origin) => new URL(origin.trim()).origin)),
+    .transform((value) => {
+      const origins = new Set<string>();
+      for (const raw of value.split(',')) {
+        const trimmed = raw.trim();
+        if (!trimmed) continue;
+        const url = new URL(trimmed);
+        origins.add(url.origin);
+        const sibling = url.hostname.startsWith('www.')
+          ? url.hostname.slice(4)
+          : `www.${url.hostname}`;
+        origins.add(`${url.protocol}//${sibling}${url.port ? `:${url.port}` : ''}`);
+      }
+      return [...origins];
+    }),
   MONGODB_URI: z.string().startsWith('mongodb').default('mongodb://127.0.0.1:27017/et-trader'),
   JWT_ACCESS_SECRET: z.string().min(32),
   COOKIE_SECURE: z
@@ -27,8 +42,9 @@ const schema = z.object({
     .startsWith('re_')
     .optional()
     .or(z.literal('').transform(() => undefined)),
-  /** Sender shown on verification emails. onboarding@resend.dev only delivers to your own Resend account email. */
-  MAIL_FROM: z.string().min(3).default('ET Trader <onboarding@resend.dev>'),
+  /** Sender shown on verification emails. Must be an address on a domain verified in Resend;
+   *  the onboarding@resend.dev fallback only delivers to your own Resend account email. */
+  MAIL_FROM: z.string().min(3).default('ET Official <noreply@etofficial.com>'),
   /** Comma-separated emails that get the admin section (they must sign up and verify first). */
   ADMIN_EMAILS: z
     .string()

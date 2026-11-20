@@ -82,7 +82,10 @@ googleRouter.get('/google/callback', async (req, res) => {
       });
     await issueSession(res, String(user._id));
     res.redirect(`${env.FRONTEND_URL}/`);
-  } catch {
+  } catch (error) {
+    // Log the real reason server-side (token exchange, state mismatch, account conflict, etc.);
+    // the browser only ever sees the generic ?error=google message.
+    console.error('Google OAuth callback failed:', error instanceof Error ? error.message : error);
     res.redirect(`${env.FRONTEND_URL}/login?error=google`);
   }
 });
