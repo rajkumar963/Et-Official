@@ -6,11 +6,11 @@ const schema = z.object({
   /** Number of reverse proxies in front of the API (e.g. Vercel rewrite + host load balancer = 2). 0 locally. */
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
   /** Canonical frontend URL used in emails and OAuth redirects. */
-  FRONTEND_URL: z.url().default('https://etofficial.com'),
+  FRONTEND_URL: z.url().default('https://www.etofficial.com'),
   /** Allowed browser origins for CORS and the CSRF origin check. */
   FRONTEND_ORIGINS: z
     .string()
-    .default('https://etofficial.com,http://etofficial.com')
+    .default('https://www.etofficial.com,https://etofficial.com')
     .transform((value) => value.split(',').map((origin) => new URL(origin.trim()).origin)),
   MONGODB_URI: z.string().startsWith('mongodb').default('mongodb://127.0.0.1:27017/et-trader'),
   JWT_ACCESS_SECRET: z.string().min(32),

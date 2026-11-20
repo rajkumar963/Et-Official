@@ -1,8 +1,11 @@
 /** Central brand + site configuration. Keep user-facing name and domain in one place. */
 export const site = {
   name: 'ET Official',
-  /** Production domain. Used for canonical URLs, Open Graph, sitemap and robots. */
-  url: 'https://etofficial.com',
+  /** Production domain. Used for canonical URLs, Open Graph, sitemap and robots.
+   *  Must be the SAME origin the site is actually served from. The apex (etofficial.com)
+   *  permanently redirects to www, so www is the canonical host — keep this in sync or
+   *  Google sees conflicting canonical/redirect signals and won't index pages cleanly. */
+  url: 'https://www.etofficial.com',
   tagline: 'Journal your trades. See your edge.',
   description:
     'ET Official is a focused trading journal to track your performance, understand your behavior, and build a better process — plus trading courses and e-books to sharpen your edge.',
