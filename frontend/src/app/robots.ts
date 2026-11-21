@@ -6,8 +6,13 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      // Private areas should not be crawled or indexed.
-      disallow: ['/dashboard', '/admin', '/checkout', '/login', '/signup', '/verify-email'],
+      /**
+       * Only the sign-in-walled app areas are blocked — crawlers can't read them anyway.
+       * /login, /signup, /verify-email and /checkout are deliberately left crawlable so Google
+       * can READ their `noindex` tag; blocking them instead lets the bare URL sit in the index
+       * as "No information is available for this page".
+       */
+      disallow: ['/dashboard', '/admin', '/api/'],
     },
     sitemap: `${site.url}/sitemap.xml`,
     host: site.url,

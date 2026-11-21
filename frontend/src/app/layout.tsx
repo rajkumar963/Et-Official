@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
-import { site } from '@/config/site';
+import { contactChannels, site } from '@/config/site';
 import './globals.css';
 
 const sans = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
@@ -48,6 +48,38 @@ export const metadata: Metadata = {
   category: 'finance',
 };
 export const viewport: Viewport = { themeColor: '#06060b' };
+
+/**
+ * Structured data so search engines can identify the brand, its logo and its official
+ * profiles, instead of guessing from page text. Rendered once, site-wide.
+ */
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${site.url}/#organization`,
+      name: site.name,
+      url: site.url,
+      logo: `${site.url}/brand-logo.jpg`,
+      description: site.description,
+      sameAs: [
+        contactChannels.youtube.href,
+        contactChannels.instagram.href,
+        contactChannels.telegramCommunity.href,
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${site.url}/#website`,
+      url: site.url,
+      name: site.name,
+      description: site.description,
+      inLanguage: 'en',
+      publisher: { '@id': `${site.url}/#organization` },
+    },
+  ],
+};
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -55,7 +87,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       data-scroll-behavior="smooth"
       className={`${sans.variable} ${display.variable} ${mono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

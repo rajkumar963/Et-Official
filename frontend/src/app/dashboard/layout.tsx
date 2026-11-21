@@ -1,8 +1,12 @@
+import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { JournalProvider } from '@/features/journal/journal-provider';
 import { API_URL } from '@/config/env';
 import { DashboardShell } from '@/features/journal/components/dashboard-shell';
+/** The whole signed-in app stays out of search results. */
+export const metadata: Metadata = { robots: { index: false, follow: false } };
+
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const jar = await cookies();
   let unauthorized = false;

@@ -12,5 +12,15 @@ const config: NextConfig = {
   async rewrites() {
     return [{ source: '/api/v1/:path*', destination: `${backendUrl}/api/v1/:path*` }];
   },
+  async redirects() {
+    return [
+      // Legacy URL Google still has indexed (it 404s). A 301 sends visitors and
+      // link equity to the homepage and lets Google drop the dead result.
+      { source: '/default', destination: '/', permanent: true },
+      { source: '/default/:path*', destination: '/', permanent: true },
+      { source: '/home', destination: '/', permanent: true },
+      { source: '/index', destination: '/', permanent: true },
+    ];
+  },
 };
 export default config;
