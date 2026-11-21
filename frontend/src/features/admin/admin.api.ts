@@ -1,8 +1,10 @@
 import {
   orderStatuses,
+  type AdminLessonDto,
   type AdminOrderDto,
   type AdminStats,
   type AdminUserDto,
+  type LessonInput,
   type OrderStatus,
   type ProductSettingDto,
   type ReviewDto,
@@ -11,6 +13,8 @@ import { api } from '@/lib/api-client';
 
 const post = <T>(path: string, body?: unknown) =>
   api<T>(path, { method: 'POST', body: body === undefined ? undefined : JSON.stringify(body) });
+const put = <T>(path: string, body?: unknown) =>
+  api<T>(path, { method: 'PUT', body: body === undefined ? undefined : JSON.stringify(body) });
 
 export type OrderFilter = OrderStatus | 'all';
 
@@ -31,11 +35,26 @@ export const adminService = {
   revoke: (id: string) => post<AdminOrderDto>(`/admin/orders/${encodeURIComponent(id)}/revoke`),
   restore: (id: string) => post<AdminOrderDto>(`/admin/orders/${encodeURIComponent(id)}/restore`),
   users: () => api<AdminUserDto[]>('/admin/users'),
+  blockUser: (id: string) =>
+    post<{ id: string; blocked: boolean }>(`/admin/users/${encodeURIComponent(id)}/block`),
+  unblockUser: (id: string) =>
+    post<{ id: string; blocked: boolean }>(`/admin/users/${encodeURIComponent(id)}/unblock`),
   products: () => api<ProductSettingDto[]>('/admin/products'),
   updateProduct: (productId: string, data: { accessUrl: string; accessNote?: string }) =>
     api<ProductSettingDto>(`/admin/products/${encodeURIComponent(productId)}`, {
       method: 'PUT',
       body: JSON.stringify(data),
+    }),
+  lessons: (productId: string) =>
+    api<AdminLessonDto[]>(`/admin/products/${encodeURIComponent(productId)}/lessons`),
+  addLesson: (productId: string, data: LessonInput) =>
+    post<AdminLessonDto>(`/admin/products/${encodeURIComponent(productId)}/lessons`, data),
+  updateLesson: (id: string, data: LessonInput) =>
+    put<AdminLessonDto>(`/admin/lessons/${encodeURIComponent(id)}`, data),
+  deleteLesson: (id: string) => api<{ id: string }>(`/admin/lessons/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  reorderLessons: (productId: string, ids: string[]) =>
+    put<AdminLessonDto[]>(`/admin/products/${encodeURIComponent(productId)}/lessons/reorder`, {
+      ids,
     }),
 };
 

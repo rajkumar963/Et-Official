@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, BookOpen, ExternalLink, GraduationCap } from 'lucide-react';
+import { ArrowRight, BookOpen, ExternalLink, GraduationCap, PlayCircle } from 'lucide-react';
 import type { OrderDto } from '@et-trader/shared';
 import { buttonClass, textLinkClass } from '@/components/ui/button';
 import { errorBox } from '@/components/ui/form';
@@ -74,9 +74,20 @@ function OrderCard({ order, index }: { order: OrderDto; index: number }) {
       )}
 
       <div className="flex flex-wrap items-center gap-4">
+        {hasAccess && order.productType === 'course' && (
+          <Link href={`/dashboard/courses/${order.productId}`} className={buttonClass()}>
+            <PlayCircle size={15} /> Study material
+          </Link>
+        )}
         {hasAccess && order.accessUrl && (
-          <a href={order.accessUrl} target="_blank" rel="noreferrer" className={buttonClass()}>
-            Open {order.productType === 'course' ? 'course' : 'e-book'} <ExternalLink size={15} />
+          <a
+            href={order.accessUrl}
+            target="_blank"
+            rel="noreferrer"
+            className={buttonClass(order.productType === 'course' ? { variant: 'secondary' } : {})}
+          >
+            {order.productType === 'course' ? 'Open in Drive' : 'Open e-book'}{' '}
+            <ExternalLink size={15} />
           </a>
         )}
         {(order.status === 'awaiting_payment' || order.status === 'rejected') && (

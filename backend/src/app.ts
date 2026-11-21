@@ -12,6 +12,7 @@ import { tradesRouter } from './modules/trades/trades.routes';
 import { analyticsRouter } from './modules/analytics/analytics.routes';
 import { usersRouter } from './modules/users/users.routes';
 import { ordersRouter } from './modules/orders/orders.routes';
+import { coursesRouter } from './modules/courses/courses.routes';
 import { adminRouter } from './modules/admin/admin.routes';
 export const app = express();
 app.disable('x-powered-by');
@@ -36,6 +37,7 @@ app.use('/api/v1/trades', requireAuth, tradesRouter);
 app.use('/api/v1/analytics', requireAuth, analyticsRouter);
 app.use('/api/v1/users', requireAuth, usersRouter);
 app.use('/api/v1/orders', requireAuth, ordersRouter);
+app.use('/api/v1/courses', requireAuth, coursesRouter);
 app.use('/api/v1/admin', adminRouter);
 app.use((_req, res) => {
   res.status(404).json({ error: { message: 'Endpoint not found' } });

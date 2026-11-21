@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   PanelLeftClose,
+  PlaySquare,
   ReceiptText,
   ShieldCheck,
   Users,
@@ -30,6 +31,7 @@ const navigation = [
   { name: 'Orders', href: '/admin/orders', icon: ReceiptText },
   { name: 'Users', href: '/admin/users', icon: Users },
   { name: 'Course access', href: '/admin/products', icon: BookKey },
+  { name: 'Course lessons', href: '/admin/lessons', icon: PlaySquare },
 ];
 
 const secondary = [

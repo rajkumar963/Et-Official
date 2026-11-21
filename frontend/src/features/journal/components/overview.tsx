@@ -70,6 +70,10 @@ export function Overview() {
         description="A clear view of your progress. An honest look at your edge."
         actions={
           <div className={headingActions}>
+            <Link href="/dashboard/settings" className={buttonClass({ variant: 'secondary' })}>
+              <Wallet size={16} />
+              Add balance
+            </Link>
             <button
               className={buttonClass({ variant: 'secondary' })}
               onClick={() => exportTrades(trades)}

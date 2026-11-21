@@ -1,13 +1,14 @@
 'use client';
 import { useMemo, useState, type CSSProperties } from 'react';
-import { RotateCw, Search, Users } from 'lucide-react';
+import { Ban, RotateCw, Search, ShieldCheck, Users } from 'lucide-react';
+import type { AdminUserDto } from '@et-trader/shared';
 import { adminService } from '@/features/admin/admin.api';
 import { useAdminQuery } from '@/features/admin/use-admin-query';
 import { PageHeading, headingActions } from '@/components/ui/page-heading';
 import { Panel } from '@/components/ui/panel';
 import { Badge, badgeClass } from '@/components/ui/badge';
 import { buttonClass } from '@/components/ui/button';
-import { input } from '@/components/ui/form';
+import { errorBox, input } from '@/components/ui/form';
 import { mono } from '@/components/ui/styles';
 import { cn } from '@/lib/cn';
 import { LoadError } from './admin-states';
@@ -16,6 +17,28 @@ import { Loading, cellSmall, rowClass, td, th, usdt } from './order-ui';
 export function AdminUsers({ initialQuery = '' }: { initialQuery?: string }) {
   const users = useAdminQuery(adminService.users);
   const [search, setSearch] = useState(initialQuery);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState('');
+
+  async function toggleBlock(u: AdminUserDto) {
+    if (
+      !u.blocked &&
+      !window.confirm(
+        `Block ${u.name}? They will lose access to the dashboard and all purchased courses until you unblock them.`,
+      )
+    )
+      return;
+    setBusyId(u.id);
+    setActionError('');
+    try {
+      await (u.blocked ? adminService.unblockUser(u.id) : adminService.blockUser(u.id));
+      await users.reload();
+    } catch (e) {
+      setActionError((e as Error).message);
+    } finally {
+      setBusyId(null);
+    }
+  }
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -65,6 +88,11 @@ export function AdminUsers({ initialQuery = '' }: { initialQuery?: string }) {
             />
           </label>
         </div>
+        {actionError && (
+          <p className={cn(errorBox, 'mb-4')} role="alert">
+            {actionError}
+          </p>
+        )}
         {users.error ? (
           <LoadError message={users.error} onRetry={users.reload} />
         ) : !users.data ? (
@@ -81,6 +109,7 @@ export function AdminUsers({ initialQuery = '' }: { initialQuery?: string }) {
                   <th className={cn(th, 'text-right')}>Orders</th>
                   <th className={cn(th, 'text-right')}>Approved</th>
                   <th className={cn(th, 'text-right')}>Total spent</th>
+                  <th className={cn(th, 'text-right')}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -117,11 +146,14 @@ export function AdminUsers({ initialQuery = '' }: { initialQuery?: string }) {
                       </div>
                     </td>
                     <td className={td}>
-                      {u.emailVerified ? (
-                        <Badge tone="gain">VERIFIED</Badge>
-                      ) : (
-                        <Badge tone="neutral">UNVERIFIED</Badge>
-                      )}
+                      <span className="flex flex-wrap gap-1">
+                        {u.blocked && <Badge tone="loss">BLOCKED</Badge>}
+                        {u.emailVerified ? (
+                          <Badge tone="gain">VERIFIED</Badge>
+                        ) : (
+                          <Badge tone="neutral">UNVERIFIED</Badge>
+                        )}
+                      </span>
                     </td>
                     <td className={td}>
                       <span className="flex gap-1">
@@ -145,6 +177,36 @@ export function AdminUsers({ initialQuery = '' }: { initialQuery?: string }) {
                     </td>
                     <td className={cn(td, mono, 'text-right font-semibold')}>
                       {usdt(u.totalSpent)}
+                    </td>
+                    <td className={cn(td, 'text-right')}>
+                      {u.isAdmin ? (
+                        <span className="text-[12px] text-dim">—</span>
+                      ) : (
+                        <button
+                          type="button"
+                          className={buttonClass({
+                            variant: 'secondary',
+                            className: cn(
+                              'ml-auto px-3 py-1.5 text-[12px]',
+                              u.blocked && 'border-[#4ade8030] text-gain',
+                            ),
+                          })}
+                          disabled={busyId === u.id}
+                          onClick={() => toggleBlock(u)}
+                        >
+                          {busyId === u.id ? (
+                            'Working…'
+                          ) : u.blocked ? (
+                            <>
+                              <ShieldCheck size={14} /> Unblock
+                            </>
+                          ) : (
+                            <>
+                              <Ban size={14} /> Block
+                            </>
+                          )}
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}

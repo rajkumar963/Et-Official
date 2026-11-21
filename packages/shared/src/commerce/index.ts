@@ -66,6 +66,34 @@ export const networkInfo: Record<
   },
 };
 
+/* ───────── Payment QR ─────────
+ * USDT is a token, so only EVM chains have a widely-read "transfer with amount" URI (EIP-681).
+ * Supported wallets (MetaMask, Trust, …) prefill the amount from it; Tron wallets and most
+ * exchanges read only the address, so TRC20 stays address-only and the UI keeps the manual note. */
+const usdtToken: Record<PaymentNetwork, { contract: string; decimals: number; chainId: number } | null> =
+  {
+    ERC20: { contract: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6, chainId: 1 },
+    BEP20: { contract: '0x55d398326f99059fF775485246999027B3197955', decimals: 18, chainId: 56 },
+    TRC20: null,
+  };
+
+/** Amount (e.g. 199 or 199.5) → integer token base units as a string, without floating-point error. */
+function toTokenUnits(amount: number, decimals: number): string {
+  const [whole, frac = ''] = amount.toString().split('.');
+  const fracPadded = (frac + '0'.repeat(decimals)).slice(0, decimals);
+  return (BigInt(whole || '0') * 10n ** BigInt(decimals) + BigInt(fracPadded || '0')).toString();
+}
+
+/** True when scanning the QR for this network can prefill the amount in supported wallets. */
+export const qrCarriesAmount = (network: PaymentNetwork) => usdtToken[network] !== null;
+
+/** QR payload: an EIP-681 token-transfer URI (with amount) on EVM chains, else the bare address. */
+export function paymentQrValue(network: PaymentNetwork, address: string, amount: number): string {
+  const token = usdtToken[network];
+  if (!token) return address;
+  return `ethereum:${token.contract}@${token.chainId}/transfer?address=${address}&uint256=${toTokenUnits(amount, token.decimals)}`;
+}
+
 /* ───────────────────────── Orders ───────────────────────── */
 
 /**
@@ -156,6 +184,7 @@ export interface AdminUserDto {
   providers: string[];
   emailVerified: boolean;
   isAdmin: boolean;
+  blocked: boolean;
   createdAt: string;
   orders: number;
   approvedOrders: number;
@@ -193,4 +222,87 @@ export interface ReviewDto {
   order: AdminOrderDto;
   /** Whether the review link can still be used. */
   actionable: boolean;
+}
+
+/* ───────────────────────── Course lessons (video) ───────────────────────── */
+
+/** Where a lesson video is hosted. Both embed view-only (no download button in the player). */
+export const lessonProviders = ['drive', 'youtube'] as const;
+export type LessonProvider = (typeof lessonProviders)[number];
+
+/**
+ * Detects a Google Drive or YouTube video from a pasted link (or bare id) and returns the
+ * provider + stable id. Returns null if it isn't a recognisable Drive/YouTube video.
+ */
+export function lessonSource(input: string): { provider: LessonProvider; id: string } | null {
+  const s = input.trim();
+  const youtube = s.match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+  );
+  if (youtube) return { provider: 'youtube', id: youtube[1] };
+  const drivePath = s.match(/\/file\/d\/([a-zA-Z0-9_-]{10,})/);
+  if (drivePath) return { provider: 'drive', id: drivePath[1] };
+  const driveQuery = s.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
+  if (driveQuery) return { provider: 'drive', id: driveQuery[1] };
+  // A link that is clearly one of the two but didn't match above is invalid, not a bare id.
+  if (/youtube\.com|youtu\.be|drive\.google|docs\.google/i.test(s)) return null;
+  // Bare id fallback: YouTube ids are exactly 11 chars; Drive ids are longer.
+  if (/^[a-zA-Z0-9_-]{11}$/.test(s)) return { provider: 'youtube', id: s };
+  if (/^[a-zA-Z0-9_-]{12,}$/.test(s)) return { provider: 'drive', id: s };
+  return null;
+}
+
+/** View-only player URL embedded in an iframe (no download control for either provider). */
+export function lessonEmbedUrl(provider: LessonProvider, id: string): string {
+  return provider === 'youtube'
+    ? `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`
+    : `https://drive.google.com/file/d/${id}/preview`;
+}
+
+/** Canonical link, reconstructed for admin display/editing. */
+export function lessonWatchUrl(provider: LessonProvider, id: string): string {
+  return provider === 'youtube'
+    ? `https://youtu.be/${id}`
+    : `https://drive.google.com/file/d/${id}/view`;
+}
+
+export const lessonInputSchema = z
+  .object({
+    title: z.string().trim().min(1, 'Add a lesson title').max(200),
+    videoUrl: z
+      .string()
+      .trim()
+      .min(5)
+      .max(500)
+      .refine((v) => lessonSource(v) !== null, 'Paste a Google Drive or YouTube video link'),
+  })
+  .strict();
+export type LessonInput = z.infer<typeof lessonInputSchema>;
+
+export const lessonReorderSchema = z.object({ ids: z.array(z.string().min(1)).min(1) }).strict();
+
+/** A lesson as the learner sees it: an embeddable, view-only player URL. */
+export interface LessonDto {
+  id: string;
+  title: string;
+  order: number;
+  provider: LessonProvider;
+  embedUrl: string;
+}
+
+/** Admin view of a lesson: includes the source link for editing. */
+export interface AdminLessonDto {
+  id: string;
+  productId: string;
+  title: string;
+  order: number;
+  provider: LessonProvider;
+  videoUrl: string;
+}
+
+/** A purchased course's study material, returned to the in-app viewer. */
+export interface CourseContentDto {
+  productId: string;
+  title: string;
+  lessons: LessonDto[];
 }

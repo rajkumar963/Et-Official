@@ -13,7 +13,10 @@ const schema = new Schema(
      * Accounts created before email verification existed have no value and are treated as verified.
      */
     emailVerified: { type: Boolean },
-    startingBalance: { type: Number, default: 10000 },
+    // New accounts start at $0; the user sets their balance in Settings (Add balance).
+    startingBalance: { type: Number, default: 0 },
+    /** When true an admin has suspended this account: all protected access is denied. */
+    blocked: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

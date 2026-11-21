@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import {
   networkInfo,
+  paymentQrValue,
+  qrCarriesAmount,
   type CheckoutConfig,
   type OrderDto,
   type PaymentNetwork,
@@ -354,7 +356,11 @@ function PayStep({
 
         <div className="mt-6 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-6 max-[640px]:grid-cols-1">
           <div className="grid place-items-center rounded-[16px] bg-white p-3 max-[640px]:mx-auto">
-            <QRCodeSVG value={order.walletAddress} size={152} level="M" />
+            <QRCodeSVG
+              value={paymentQrValue(order.network, order.walletAddress, order.amount)}
+              size={152}
+              level="M"
+            />
           </div>
           <div className="grid min-w-0 gap-4">
             <div>
@@ -382,7 +388,9 @@ function PayStep({
           {[
             `Send only USDT on ${order.network}. Funds sent on another network or token can't be recovered.`,
             'Send the exact amount. Your exchange may deduct a fee — make sure the full amount arrives.',
-            'The QR code contains only the address; enter the amount yourself.',
+            qrCarriesAmount(order.network)
+              ? 'Scanning the QR in a supported wallet fills in the address and amount. From an exchange, enter the amount yourself.'
+              : 'The QR code contains only the address; enter the amount yourself.',
           ].map((text) => (
             <li key={text} className="flex gap-2">
               <AlertTriangle size={15} className="mt-0.5 shrink-0 text-amber" aria-hidden="true" />

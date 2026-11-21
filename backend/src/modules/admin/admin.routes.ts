@@ -2,12 +2,18 @@ import { Router, type Request, type Response } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import {
   getProduct,
+  lessonInputSchema,
+  lessonReorderSchema,
+  lessonSource,
+  lessonWatchUrl,
   orderStatuses,
   productSettingSchema,
   products,
   rejectOrderSchema,
   reviewActionSchema,
+  type AdminLessonDto,
   type AdminStats,
+  type LessonProvider,
   type AdminUserDto,
   type OrderStatus,
   type ProductSettingDto,
@@ -15,6 +21,7 @@ import {
 } from '@et-trader/shared';
 import { requireAuth } from '../../middleware/require-auth';
 import { requireAdmin } from '../../middleware/require-admin';
+import { Lesson } from '../../models/Lesson';
 import { Order } from '../../models/Order';
 import { ProductSetting } from '../../models/ProductSetting';
 import { User, isAdmin } from '../../models/User';
@@ -38,6 +45,13 @@ async function findOrder(id: string) {
   const order = await Order.findById(id);
   if (!order) throw new HttpError(404, 'Order not found.');
   return order;
+}
+
+async function findUser(id: string) {
+  if (!idPattern.test(id)) throw new HttpError(404, 'User not found.');
+  const user = await User.findById(id);
+  if (!user) throw new HttpError(404, 'User not found.');
+  return user;
 }
 
 /* ─────────── Email review link (no login: the one-time token is the authorisation) ─────────── */
@@ -187,6 +201,7 @@ adminRouter.get('/users', async (_req: Request, res: Response) => {
       providers: user.providers,
       emailVerified: user.emailVerified !== false,
       isAdmin: isAdmin(user),
+      blocked: Boolean(user.get('blocked')),
       createdAt: new Date(user.get('createdAt')).toISOString(),
       orders: t?.orders ?? 0,
       approvedOrders: t?.approved ?? 0,
@@ -195,6 +210,19 @@ adminRouter.get('/users', async (_req: Request, res: Response) => {
   });
   res.json({ data });
 });
+
+async function setBlocked(req: Request, res: Response, blocked: boolean) {
+  const user = await findUser(String(req.params.id));
+  if (isAdmin(user)) throw new HttpError(409, 'Admin accounts cannot be blocked.');
+  user.set('blocked', blocked);
+  await user.save();
+  res.json({ data: { id: String(user._id), blocked } });
+}
+
+adminRouter.post('/users/:id/block', (req: Request, res: Response) => setBlocked(req, res, true));
+adminRouter.post('/users/:id/unblock', (req: Request, res: Response) =>
+  setBlocked(req, res, false),
+);
 
 adminRouter.get('/products', async (_req: Request, res: Response) => {
   const settings = await ProductSetting.find();
@@ -228,4 +256,86 @@ adminRouter.put('/products/:productId', async (req: Request, res: Response) => {
     accessNote: setting.accessNote,
   };
   res.json({ data });
+});
+
+/* ─────────── Course lessons (video) ─────────── */
+
+type LessonDoc = InstanceType<typeof Lesson>;
+
+const adminLessonDto = (lesson: LessonDoc): AdminLessonDto => {
+  const provider = lesson.get('provider') as LessonProvider;
+  return {
+    id: String(lesson._id),
+    productId: lesson.get('productId'),
+    title: lesson.get('title'),
+    order: lesson.get('order'),
+    provider,
+    videoUrl: lessonWatchUrl(provider, lesson.get('sourceId')),
+  };
+};
+
+function requireCourse(productId: string) {
+  const product = getProduct(productId);
+  if (!product || product.type !== 'course') throw new HttpError(404, 'Course not found.');
+  return product;
+}
+
+async function findLesson(id: string) {
+  if (!idPattern.test(id)) throw new HttpError(404, 'Lesson not found.');
+  const lesson = await Lesson.findById(id);
+  if (!lesson) throw new HttpError(404, 'Lesson not found.');
+  return lesson;
+}
+
+const lessonsOf = (productId: string) =>
+  Lesson.find({ productId }).sort({ order: 1, createdAt: 1 });
+
+adminRouter.get('/products/:productId/lessons', async (req: Request, res: Response) => {
+  const product = requireCourse(String(req.params.productId));
+  const lessons = await lessonsOf(product.id);
+  res.json({ data: lessons.map(adminLessonDto) });
+});
+
+adminRouter.post('/products/:productId/lessons', async (req: Request, res: Response) => {
+  const product = requireCourse(String(req.params.productId));
+  const { title, videoUrl } = lessonInputSchema.parse(req.body);
+  const source = lessonSource(videoUrl)!;
+  const last = await Lesson.findOne({ productId: product.id }).sort({ order: -1 });
+  const lesson = await Lesson.create({
+    productId: product.id,
+    title,
+    provider: source.provider,
+    sourceId: source.id,
+    order: (last?.get('order') ?? -1) + 1,
+  });
+  res.status(201).json({ data: adminLessonDto(lesson) });
+});
+
+adminRouter.put('/lessons/:id', async (req: Request, res: Response) => {
+  const lesson = await findLesson(String(req.params.id));
+  const { title, videoUrl } = lessonInputSchema.parse(req.body);
+  const source = lessonSource(videoUrl)!;
+  lesson.set({ title, provider: source.provider, sourceId: source.id });
+  await lesson.save();
+  res.json({ data: adminLessonDto(lesson) });
+});
+
+adminRouter.delete('/lessons/:id', async (req: Request, res: Response) => {
+  const lesson = await findLesson(String(req.params.id));
+  await lesson.deleteOne();
+  res.json({ data: { id: String(lesson._id) } });
+});
+
+adminRouter.put('/products/:productId/lessons/reorder', async (req: Request, res: Response) => {
+  const product = requireCourse(String(req.params.productId));
+  const { ids } = lessonReorderSchema.parse(req.body);
+  await Promise.all(
+    ids.map((id, index) =>
+      idPattern.test(id)
+        ? Lesson.updateOne({ _id: id, productId: product.id }, { $set: { order: index } })
+        : Promise.resolve(),
+    ),
+  );
+  const lessons = await lessonsOf(product.id);
+  res.json({ data: lessons.map(adminLessonDto) });
 });
