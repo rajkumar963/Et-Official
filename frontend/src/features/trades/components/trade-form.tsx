@@ -4,7 +4,7 @@ import { tradeCreateSchema, type TradeDto } from '@et-trader/shared';
 import { Modal } from '@/components/ui/modal';
 import { tradeService } from '@/features/trades/trades.api';
 import { useJournal } from '@/features/journal/journal-provider';
-import { localDay } from '@/lib/format';
+import { localDay, signedMoney } from '@/lib/format';
 import { buttonClass } from '@/components/ui/button';
 import {
   errorBox,
@@ -25,6 +25,12 @@ const sideOption = {
   short:
     'has-[input:checked]:bg-[linear-gradient(135deg,#ff5c6c,#e11d48)] has-[input:checked]:text-white has-[input:checked]:shadow-[0_4px_18px_#ff5c6c55]',
 };
+/** Profit/Loss picker shares the Long/Short look. */
+const outcomeOption = { profit: sideOption.long, loss: sideOption.short };
+const segmentGroup = 'grid grid-cols-2 gap-1 rounded-xl border border-line-strong bg-[#0a0a12cc] p-1';
+const segmentOption =
+  'relative flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg p-2 font-mono text-[12px] font-semibold text-muted transition-[background,color,box-shadow] duration-[250ms] hover:text-white has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-violet-2';
+const segmentLegend = 'mb-2 p-0 text-[12.5px] font-medium text-[#cdc6dd]';
 export function TradeForm({
   trade,
   date,
@@ -37,6 +43,16 @@ export function TradeForm({
   const { refresh } = useJournal();
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  /**
+   * The amount is captured as a positive number plus a Profit/Loss choice, because several
+   * mobile numeric keyboards have no minus key — users literally could not enter a loss.
+   */
+  const [outcome, setOutcome] = useState<'profit' | 'loss'>(
+    trade && trade.pnl < 0 ? 'loss' : 'profit',
+  );
+  const [amount, setAmount] = useState(trade ? String(Math.abs(trade.pnl)) : '');
+  // Math.abs so a typed "-" (still possible on desktop) can't cancel out the Loss choice.
+  const signedPnl = Math.abs(Number(amount) || 0) * (outcome === 'loss' ? -1 : 1);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
@@ -47,7 +63,8 @@ export function TradeForm({
       date: f.get('date'),
       symbol: f.get('symbol'),
       side: f.get('side'),
-      pnl: Number(f.get('pnl')),
+      // Sign comes from the Profit/Loss choice, never from typing a minus.
+      pnl: signedPnl,
       strategy: f.get('strategy'),
       notes: f.get('notes'),
       entryPrice: optional('entryPrice'),
@@ -102,16 +119,10 @@ export function TradeForm({
             />
           </label>
           <fieldset className="m-0 flex min-w-0 flex-col gap-2 border-0 p-0">
-            <legend className="mb-2 p-0 text-[12.5px] font-medium text-[#cdc6dd]">Direction</legend>
-            <div className="grid grid-cols-2 gap-1 rounded-xl border border-line-strong bg-[#0a0a12cc] p-1">
+            <legend className={segmentLegend}>Direction</legend>
+            <div className={segmentGroup}>
               {(['long', 'short'] as const).map((side) => (
-                <label
-                  key={side}
-                  className={cn(
-                    'relative flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg p-2 font-mono text-[12px] font-semibold text-muted transition-[background,color,box-shadow] duration-[250ms] hover:text-white has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-violet-2',
-                    sideOption[side],
-                  )}
-                >
+                <label key={side} className={cn(segmentOption, sideOption[side])}>
                   <input
                     className="pointer-events-none absolute opacity-0"
                     type="radio"
@@ -124,17 +135,46 @@ export function TradeForm({
               ))}
             </div>
           </fieldset>
+          <fieldset className="m-0 flex min-w-0 flex-col gap-2 border-0 p-0">
+            <legend className={segmentLegend}>Result</legend>
+            <div className={segmentGroup}>
+              {(['profit', 'loss'] as const).map((o) => (
+                <label key={o} className={cn(segmentOption, outcomeOption[o])}>
+                  <input
+                    className="pointer-events-none absolute opacity-0"
+                    type="radio"
+                    name="outcome"
+                    value={o}
+                    checked={outcome === o}
+                    onChange={() => setOutcome(o)}
+                  />
+                  {o === 'profit' ? 'Profit ↗' : 'Loss ↘'}
+                </label>
+              ))}
+            </div>
+          </fieldset>
           <label className={label}>
-            Net P&amp;L (USD)
+            Amount (USD)
             <input
               className={monoInput}
-              name="pnl"
+              name="amount"
               type="number"
+              min="0"
               step="0.01"
+              inputMode="decimal"
               required
               placeholder="e.g. 480.00"
-              defaultValue={trade?.pnl}
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
             />
+            <small
+              className={cn(
+                'mt-1 block font-mono text-[11.5px] tabular-nums',
+                outcome === 'loss' ? tone.red : tone.green,
+              )}
+            >
+              Saves as {signedMoney(signedPnl)}
+            </small>
           </label>
           <label className={label}>
             Entry price
