@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: 'Forex Trading — Open an Account',
   description:
     'Open a forex trading account with a regulated broker, then log every position in your ET Official journal. Includes important updates and information before you start.',
+  alternates: { canonical: '/brokers/forex' },
 };
 
 export default function ForexTradingPage() {

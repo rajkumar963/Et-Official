@@ -23,7 +23,9 @@ export const metadata: Metadata = {
     icon: '/brand-logo.jpg',
     apple: '/brand-logo.jpg',
   },
-  alternates: { canonical: '/' },
+  // NOTE: no `alternates.canonical` here on purpose. Next.js inherits layout metadata into
+  // every child page, so a canonical set here would make each page declare the homepage as its
+  // canonical URL and tell Google not to index it. Each page sets its own canonical instead.
   robots: {
     index: true,
     follow: true,

@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   title: 'Trading E-books',
   description:
     'Trading e-books on price action patterns, candlestick and chart patterns (Hindi edition) and a complete gold (XAUUSD) strategy guide.',
+  alternates: { canonical: '/ebooks' },
 };
 
 const footerLink = 'inline-flex items-center gap-2 font-semibold text-[#d4c8ff] hover:text-white';

@@ -12,6 +12,7 @@ import {
   courseCard,
   courseSectionTitle,
 } from '@/features/marketing/components/course-info';
+import { courseFaqs } from '@/features/marketing/data/courses';
 import { gradientText, home, sectionLabel } from '@/features/marketing/marketing-styles';
 import { cn } from '@/lib/cn';
 
@@ -19,13 +20,29 @@ export const metadata: Metadata = {
   title: 'Trading Courses',
   description:
     'Explore Basic to Advanced and Advanced to Pro trading courses with lifetime access.',
+  alternates: { canonical: '/courses' },
 };
 
 const footerLink = 'inline-flex items-center gap-2 font-semibold text-[#d4c8ff] hover:text-white';
 
+/** FAQ structured data — lets Google show these answers directly in search results. */
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: courseFaqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+  })),
+};
+
 export default function CoursesPage() {
   return (
     <div className={home}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <SiteNavbar />
       <main className="min-h-screen px-6 pt-[150px] pb-[110px] max-[560px]:px-[18px] max-[560px]:pt-[120px]">
         <div className="mx-auto max-w-[1192px]">

@@ -14,6 +14,7 @@ import { cn } from '@/lib/cn';
 export const metadata: Metadata = {
   title: 'Contact Us',
   description: 'Contact ET Official about the trading journal, courses, or e-books.',
+  alternates: { canonical: '/contact' },
 };
 
 const channels = [
