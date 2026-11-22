@@ -23,6 +23,7 @@ import { PageHeading, headingActions } from '@/components/ui/page-heading';
 import { StatCard, StatIcon } from '@/components/ui/stat-card';
 import { Panel, PanelHeader } from '@/components/ui/panel';
 import { Badge, StatusDot } from '@/components/ui/badge';
+import { MarketSessions } from '@/components/ui/market-sessions';
 import { buttonClass, textLinkClass } from '@/components/ui/button';
 import { eyebrow, mono, note, tone } from '@/components/ui/styles';
 import { cn } from '@/lib/cn';
@@ -60,7 +61,7 @@ export function Overview() {
   const summaryEyebrow = cn(eyebrow, 'text-[9px] text-[#8f8ca5] max-[700px]:text-[7.5px]');
   const summaryValue = cn(
     mono,
-    'text-[17px] tracking-[-0.04em] max-[1200px]:text-[14px] max-[700px]:text-[12px]',
+    'text-[17px] tracking-[-0.04em] tabular-nums max-[1200px]:text-[14px] max-[700px]:text-[12px]',
   );
   return (
     <>
@@ -88,6 +89,7 @@ export function Overview() {
           </div>
         }
       />
+      <MarketSessions className="rounded-[16px] border border-line" />
       <div className="grid grid-cols-3 gap-3.5 min-[1650px]:grid-cols-6 max-[700px]:grid-cols-2 max-[700px]:gap-2.5">
         <StatCard
           index={0}

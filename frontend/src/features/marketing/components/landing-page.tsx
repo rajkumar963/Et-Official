@@ -18,6 +18,7 @@ import { SiteFooter } from './site-footer';
 import { ContactSection } from './contact-section';
 import { CoursesSection, EbooksSection, LearningSectionLinks } from './learning-sections';
 import { LandingHero, primaryButton } from './landing-hero';
+import { MarketSessions } from '@/components/ui/market-sessions';
 import { FeaturesSection, displayHeading } from './landing-features';
 import { CountUp, Magnetic, useReveal, useSpotlight } from '@/components/effects/motion';
 import { gradientText, home, sectionLabel } from '@/features/marketing/marketing-styles';
@@ -202,6 +203,7 @@ export function LandingPage() {
       <SiteNavbar />
       <main>
         <LandingHero />
+        <MarketSessions className="border-y border-[#ffffff0f]" />
 
         <section
           className="flex flex-col gap-[22px] pt-[90px] pb-10"

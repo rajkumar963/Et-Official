@@ -52,6 +52,8 @@ export function TradeTable({ trades, compact = false }: { trades: TradeDto[]; co
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [shared, setShared] = useState(false);
+  /** Largest absolute P&L in view, used to scale each row's magnitude bar. */
+  const maxAbs = Math.max(1, ...trades.map((t) => Math.abs(t.pnl)));
   async function remove() {
     if (!deleting) return;
     setBusy(true);
@@ -86,7 +88,18 @@ export function TradeTable({ trades, compact = false }: { trades: TradeDto[]; co
                 className="animate-[rise_0.5s_calc(var(--i,0)*40ms)_var(--ease-smooth)_backwards] transition-[background] duration-200 last:[&>td]:border-b-0 hover:bg-[linear-gradient(90deg,#8b5cf60f,transparent)]"
                 style={{ '--i': i } as CSSProperties}
               >
-                <td className={cn(td, mono)}>
+                <td
+                  className={cn(
+                    td,
+                    mono,
+                    'border-l-2 tabular-nums',
+                    t.pnl > 0
+                      ? 'border-l-[#4ade8080]'
+                      : t.pnl < 0
+                        ? 'border-l-[#ff5c6c80]'
+                        : 'border-l-[#ffffff1a]',
+                  )}
+                >
                   {shortDate(t.date)}
                   <small className={cellSmall}>{t.date.slice(0, 4)}</small>
                 </td>
@@ -110,12 +123,24 @@ export function TradeTable({ trades, compact = false }: { trades: TradeDto[]; co
                   className={cn(
                     td,
                     mono,
-                    'text-right',
+                    'relative overflow-hidden text-right tabular-nums',
                     t.pnl > 0 && cn(tone.green, 'font-semibold'),
                     t.pnl < 0 && cn(tone.red, 'font-semibold'),
                   )}
                 >
-                  {signedMoney(t.pnl)}
+                  {/* Magnitude bar: width scales with this trade's size relative to the biggest in view. */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-y-[7px] right-0 rounded-l-[3px]"
+                    style={{
+                      width: `${Math.max(4, (Math.abs(t.pnl) / maxAbs) * 100)}%`,
+                      background:
+                        t.pnl >= 0
+                          ? 'linear-gradient(90deg,transparent,rgba(74,222,128,0.16))'
+                          : 'linear-gradient(90deg,transparent,rgba(255,92,108,0.16))',
+                    }}
+                  />
+                  <span className="relative">{signedMoney(t.pnl)}</span>
                 </td>
                 <td className={td}>
                   <div className="flex items-center justify-end gap-0.5">

@@ -116,7 +116,7 @@ export function LandingHero() {
         className="pointer-events-none absolute inset-x-0 top-0 bottom-[-10%] z-[-1] overflow-hidden [mask-image:linear-gradient(to_bottom,#000_70%,transparent)]"
         aria-hidden="true"
       >
-        <MarketCanvas className="absolute top-[70px] left-0 h-[640px] w-full opacity-50 [mask-image:radial-gradient(ellipse_60%_55%_at_50%_42%,transparent_20%,#000_75%)]" />
+        <MarketCanvas className="absolute top-[64px] left-0 h-[760px] w-full opacity-[0.68] [mask-image:radial-gradient(ellipse_58%_52%_at_50%_40%,transparent_18%,#000_72%)]" />
         <div className="absolute inset-0 bg-[size:64px_64px] [background-image:linear-gradient(#ffffff08_1px,transparent_1px),linear-gradient(90deg,#ffffff08_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_70%_50%_at_50%_30%,#000_10%,transparent_70%)]" />
         <i
           className={cn(

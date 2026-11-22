@@ -38,6 +38,18 @@ export function MarketCanvas({ className, speed = 0.35 }: { className?: string; 
 
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
+
+      // Price gridlines — chart scaffolding, deliberately unlabelled (the data is decorative).
+      ctx.strokeStyle = 'rgba(255,255,255,0.035)';
+      ctx.lineWidth = 1;
+      for (let g = 1; g < 5; g++) {
+        const gy = Math.round(height * 0.12 + (height * 0.76 * g) / 5) + 0.5;
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(width, gy);
+        ctx.stroke();
+      }
+
       for (let i = 0; i < candles.length; i++) {
         const k = candles[i]!;
         const x = i * step - offset;
@@ -51,6 +63,19 @@ export function MarketCanvas({ className, speed = 0.35 }: { className?: string; 
         const top = y(Math.max(k.o, k.c));
         ctx.fillRect(x, top, body, Math.max(1.5, y(Math.min(k.o, k.c)) - top));
       }
+      // Area fill under the price line, for depth.
+      const area = ctx.createLinearGradient(0, 0, 0, height);
+      area.addColorStop(0, 'rgba(139,92,246,0.22)');
+      area.addColorStop(0.55, 'rgba(139,92,246,0.06)');
+      area.addColorStop(1, 'rgba(139,92,246,0)');
+      ctx.fillStyle = area;
+      ctx.beginPath();
+      ctx.moveTo(-step, height);
+      candles.forEach((k, i) => ctx.lineTo(i * step - offset + body / 2, y(k.c)));
+      ctx.lineTo(width + step, height);
+      ctx.closePath();
+      ctx.fill();
+
       const line = ctx.createLinearGradient(0, 0, width, 0);
       line.addColorStop(0, 'rgba(139,92,246,0)');
       line.addColorStop(0.45, 'rgba(167,139,250,0.6)');
@@ -67,6 +92,33 @@ export function MarketCanvas({ className, speed = 0.35 }: { className?: string; 
       });
       ctx.stroke();
       ctx.shadowBlur = 0;
+
+      // Glowing "live price" head on the newest candle, with a breathing halo.
+      const head = candles[candles.length - 1];
+      if (head) {
+        const hx = (candles.length - 1) * step - offset + body / 2;
+        const hy = y(head.c);
+        const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 420);
+        ctx.strokeStyle = 'rgba(34,211,238,0.14)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 6]);
+        ctx.beginPath();
+        ctx.moveTo(0, hy);
+        ctx.lineTo(hx, hy);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = `rgba(34,211,238,${0.10 + pulse * 0.16})`;
+        ctx.beginPath();
+        ctx.arc(hx, hy, 7 + pulse * 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(190,245,255,0.95)';
+        ctx.shadowColor = 'rgba(34,211,238,0.9)';
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(hx, hy, 2.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
     };
 
     const resize = () => {

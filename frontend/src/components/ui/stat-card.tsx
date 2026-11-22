@@ -95,7 +95,8 @@ export function StatCard({
       <strong
         className={cn(
           mono,
-          'text-[27px] leading-[1.15] font-bold tracking-[-0.05em] min-[1650px]:text-[24px] max-[700px]:text-[20px]',
+          // tabular-nums keeps digit widths fixed so counting values don't jitter.
+          'text-[27px] leading-[1.15] font-bold tracking-[-0.05em] tabular-nums min-[1650px]:text-[24px] max-[700px]:text-[20px]',
           valueToneName && valueTone[valueToneName],
           valueClassName,
         )}
