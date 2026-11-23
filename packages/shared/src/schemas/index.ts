@@ -28,10 +28,16 @@ const tradeFields = {
   symbol: z
     .string()
     .trim()
-    .min(1)
-    .max(20)
-    .regex(/^[a-zA-Z0-9.\-/:]+$/)
-    .transform((v) => v.toUpperCase()),
+    .min(1, 'Enter the symbol you traded')
+    .max(20, 'Use at most 20 characters')
+    // Real tickers include spaces and punctuation (BANK NIFTY, S&P 500, GOLD (XAUUSD), EUR/USD),
+    // so the set is permissive; the message names the allowed characters instead of dumping a regex.
+    .regex(
+      /^[A-Za-z0-9 .\-/:&_()#]+$/,
+      'Use letters, numbers, spaces and . - / : & _ ( ) #',
+    )
+    // Collapse repeated spaces so "BANK   NIFTY" and "BANK NIFTY" are the same symbol.
+    .transform((v) => v.replace(/\s+/g, ' ').toUpperCase()),
   side: z.enum(['long', 'short']),
   pnl: z.number().finite().min(-1e12).max(1e12),
   entryPrice: z.number().nonnegative().optional(),

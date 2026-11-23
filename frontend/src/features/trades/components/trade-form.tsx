@@ -31,6 +31,19 @@ const segmentGroup = 'grid grid-cols-2 gap-1 rounded-xl border border-line-stron
 const segmentOption =
   'relative flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg p-2 font-mono text-[12px] font-semibold text-muted transition-[background,color,box-shadow] duration-[250ms] hover:text-white has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-violet-2';
 const segmentLegend = 'mb-2 p-0 text-[12.5px] font-medium text-[#cdc6dd]';
+/** Human names for schema fields, so validation errors say which input to fix. */
+const fieldLabels: Record<string, string> = {
+  date: 'Trading date',
+  symbol: 'Symbol',
+  side: 'Direction',
+  pnl: 'Amount',
+  entryPrice: 'Entry price',
+  exitPrice: 'Exit price',
+  quantity: 'Quantity',
+  strategy: 'Strategy',
+  notes: 'Trade notes',
+  tags: 'Tags',
+};
 export function TradeForm({
   trade,
   date,
@@ -76,7 +89,15 @@ export function TradeForm({
         .filter(Boolean),
     });
     if (!parsed.success) {
-      setError(parsed.error.issues.map((i) => i.message).join('. '));
+      // Name the offending field: a bare Zod message left users guessing which input was wrong.
+      setError(
+        parsed.error.issues
+          .map((i) => {
+            const field = fieldLabels[String(i.path[0] ?? '')];
+            return field ? `${field}: ${i.message}` : i.message;
+          })
+          .join(' · '),
+      );
       setBusy(false);
       return;
     }
