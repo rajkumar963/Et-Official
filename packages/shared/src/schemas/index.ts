@@ -1,7 +1,7 @@
 import { z } from 'zod';
 export const daySchema = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Pick a valid date')
   .refine(
     (value) =>
       !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value,
@@ -96,3 +96,18 @@ export const startingBalanceSchema = profileUpdateSchema;
 export const idSchema = z.string().regex(/^[a-f0-9]{24}$/i, 'Invalid record ID');
 export type TradeInput = z.infer<typeof tradeCreateSchema>;
 export type TradePatch = z.infer<typeof tradePatchSchema>;
+
+/* ───────────────────────── Withdrawals ─────────────────────────
+ * Cash the trader takes out of the account. Recorded separately from trades so trading
+ * performance (P&L, equity curve) stays untouched while the cash balance drops. */
+export const withdrawalCreateSchema = z
+  .object({
+    amount: z
+      .number()
+      .positive('Enter an amount greater than zero')
+      .max(1e12, 'That amount is too large'),
+    date: daySchema,
+    note: z.string().trim().max(200).default(''),
+  })
+  .strict();
+export type WithdrawalCreateInput = z.infer<typeof withdrawalCreateSchema>;

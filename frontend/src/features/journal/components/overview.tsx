@@ -28,6 +28,7 @@ import { buttonClass, textLinkClass } from '@/components/ui/button';
 import { eyebrow, mono, note, tone } from '@/components/ui/styles';
 import { cn } from '@/lib/cn';
 import { TradeTable } from '@/features/trades/components/trade-table';
+import { WithdrawalsPanel } from '@/features/withdrawals/components/withdrawals-panel';
 import { money, signedMoney, shortDate } from '@/lib/format';
 import { exportTrades } from '@/features/trades/export-csv';
 const pct = (n: number) => `${n.toFixed(1)}%`;
@@ -45,9 +46,11 @@ function Progress({ value, className }: { value: number; className?: string }) {
 /** Small dark tile used by the equity summary and outcome stats. */
 const tile = 'flex flex-col rounded-[13px] border border-[#ffffff08] bg-[#00000033]';
 export function Overview() {
-  const { summary: s, user, trades, openTrade } = useJournal();
+  const { summary: s, user, trades, openTrade, totalWithdrawn } = useJournal();
   if (!s || !user) return null;
   const pnlTone = s.totalPnl >= 0 ? 'green' : 'red';
+  // Withdrawn cash leaves the account, so it lowers the balance without touching P&L.
+  const cashBalance = user.startingBalance + s.totalPnl - totalWithdrawn;
   const streakUnit =
     s.currentStreak.type === 'neutral'
       ? 'days'
@@ -95,8 +98,12 @@ export function Overview() {
           index={0}
           label="Current balance"
           icon={Wallet}
-          value={<CountUp value={user.startingBalance + s.totalPnl} format={money} />}
-          sub={`Base capital ${money(user.startingBalance)}`}
+          value={<CountUp value={cashBalance} format={money} />}
+          sub={
+            totalWithdrawn > 0
+              ? `Capital ${money(user.startingBalance)} · withdrawn ${money(totalWithdrawn)}`
+              : `Base capital ${money(user.startingBalance)}`
+          }
         >
           <Sparkline className="-mt-1 h-[34px]" values={s.equityCurve.map((p) => p.balance)} />
         </StatCard>
@@ -169,7 +176,7 @@ export function Overview() {
           <div className="mb-1.5 grid grid-cols-3 gap-2.5 max-[700px]:gap-1.5">
             <div className={cn(tile, 'gap-1.5 px-3.5 py-3 max-[700px]:p-2.5')}>
               <span className={summaryEyebrow}>CURRENT EQUITY</span>
-              <strong className={summaryValue}>{money(user.startingBalance + s.totalPnl)}</strong>
+              <strong className={summaryValue}>{money(cashBalance)}</strong>
             </div>
             <div className={cn(tile, 'gap-1.5 px-3.5 py-3 max-[700px]:p-2.5')}>
               <span className={summaryEyebrow}>NET RETURN</span>
@@ -270,6 +277,7 @@ export function Overview() {
             performance assessments.
           </p>
         </Panel>
+        <WithdrawalsPanel index={8} />
       </div>
     </>
   );

@@ -9,15 +9,19 @@ import {
   type ReactNode,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import type { UserDto, TradeDto, AnalyticsSummary } from '@et-trader/shared';
+import type { UserDto, TradeDto, AnalyticsSummary, WithdrawalDto } from '@et-trader/shared';
 import { authService } from '@/features/auth/auth.api';
 import { tradeService } from '@/features/trades/trades.api';
 import { getAnalytics } from '@/features/analytics/analytics.api';
+import { withdrawalService } from '@/features/withdrawals/withdrawals.api';
 import { ApiError } from '@/lib/api-client';
 interface Journal {
   user: UserDto | null;
   trades: TradeDto[];
   summary: AnalyticsSummary | null;
+  withdrawals: WithdrawalDto[];
+  /** Sum of all recorded withdrawals, subtracted from the cash balance. */
+  totalWithdrawn: number;
   loading: boolean;
   error: string;
   refresh: () => Promise<void>;
@@ -31,6 +35,7 @@ export function JournalProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserDto | null>(null);
   const [trades, setTrades] = useState<TradeDto[]>([]);
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
+  const [withdrawals, setWithdrawals] = useState<WithdrawalDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editor, setEditor] = useState<Journal['editor']>(null);
@@ -42,10 +47,15 @@ export function JournalProvider({ children }: { children: ReactNode }) {
         setError('');
         // Verify or renew the session before starting concurrent protected reads.
         const u = await authService.me();
-        const [t, s] = await Promise.all([tradeService.list(), getAnalytics()]);
+        const [t, s, w] = await Promise.all([
+          tradeService.list(),
+          getAnalytics(),
+          withdrawalService.list(),
+        ]);
         setUser(u);
         setTrades(t);
         setSummary(s);
+        setWithdrawals(w);
       } catch (e) {
         if (e instanceof ApiError && e.status === 401) router.replace('/login');
         else setError((e as Error).message);
@@ -66,6 +76,8 @@ export function JournalProvider({ children }: { children: ReactNode }) {
         user,
         trades,
         summary,
+        withdrawals,
+        totalWithdrawn: withdrawals.reduce((sum, w) => sum + w.amount, 0),
         loading,
         error,
         refresh,

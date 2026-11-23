@@ -54,3 +54,12 @@ export interface VerificationStatus {
   email: string;
   resendAvailableAt: string;
 }
+
+/** A single recorded cash withdrawal. */
+export interface WithdrawalDto {
+  id: string;
+  amount: number;
+  date: string;
+  note: string;
+  createdAt: string;
+}
