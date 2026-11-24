@@ -39,7 +39,7 @@ function memberSince(iso?: string) {
 }
 
 export function ProfileView() {
-  const { user, summary, refresh } = useJournal();
+  const { user, summary, refresh, cashBalance, totalWithdrawn } = useJournal();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [error, setError] = useState('');
@@ -202,8 +202,12 @@ export function ProfileView() {
           label="ACCOUNT BALANCE"
           icon={Wallet}
           tone="cyan"
-          value={money(start + pnl)}
-          sub={`Starting ${money(start)}`}
+          value={money(cashBalance)}
+          sub={
+            totalWithdrawn > 0
+              ? `Starting ${money(start)} · withdrawn ${money(totalWithdrawn)}`
+              : `Starting ${money(start)}`
+          }
         />
         <StatCard
           index={1}

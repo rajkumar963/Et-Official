@@ -46,11 +46,9 @@ function Progress({ value, className }: { value: number; className?: string }) {
 /** Small dark tile used by the equity summary and outcome stats. */
 const tile = 'flex flex-col rounded-[13px] border border-[#ffffff08] bg-[#00000033]';
 export function Overview() {
-  const { summary: s, user, trades, openTrade, totalWithdrawn } = useJournal();
+  const { summary: s, user, trades, openTrade, totalWithdrawn, cashBalance } = useJournal();
   if (!s || !user) return null;
   const pnlTone = s.totalPnl >= 0 ? 'green' : 'red';
-  // Withdrawn cash leaves the account, so it lowers the balance without touching P&L.
-  const cashBalance = user.startingBalance + s.totalPnl - totalWithdrawn;
   const streakUnit =
     s.currentStreak.type === 'neutral'
       ? 'days'

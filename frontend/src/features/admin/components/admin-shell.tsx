@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   PanelLeftClose,
+  ChartNoAxesCombined,
   PlaySquare,
   ReceiptText,
   ShieldCheck,
@@ -22,6 +23,7 @@ import { errorBox } from '@/components/ui/form';
 import { eyebrow, mono } from '@/components/ui/styles';
 import { AmbientBackdrop } from '@/components/effects/ambient-backdrop';
 import { authService } from '@/features/auth/auth.api';
+import { resetAnalytics } from '@/features/analytics/posthog';
 import { cn } from '@/lib/cn';
 
 const mobileOnly = 'hidden max-[700px]:inline-flex';
@@ -32,6 +34,7 @@ const navigation = [
   { name: 'Users', href: '/admin/users', icon: Users },
   { name: 'Course access', href: '/admin/products', icon: BookKey },
   { name: 'Course lessons', href: '/admin/lessons', icon: PlaySquare },
+  { name: 'Analytics', href: '/admin/analytics', icon: ChartNoAxesCombined },
 ];
 
 const secondary = [
@@ -183,6 +186,7 @@ export function AdminShell({
               onClick={async () => {
                 try {
                   await authService.logout();
+      resetAnalytics();
                   router.replace('/login');
                 } catch (e) {
                   setLogoutError((e as Error).message);

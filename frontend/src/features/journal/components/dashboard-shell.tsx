@@ -27,6 +27,7 @@ import { CountUp, useSpotlight } from '@/components/effects/motion';
 import { Sparkline } from '@/components/charts/journal-charts';
 import { useJournal } from '@/features/journal/journal-provider';
 import { authService } from '@/features/auth/auth.api';
+import { resetAnalytics } from '@/features/analytics/posthog';
 import { TradeForm } from '@/features/trades/components/trade-form';
 import { money } from '@/lib/format';
 import { cn } from '@/lib/cn';
@@ -64,6 +65,8 @@ export function DashboardShell({ children }: { children: ReactNode }) {
   const user = journal.user;
   const start = user?.startingBalance || 0;
   const pnl = journal.summary?.totalPnl || 0;
+  // Cash on hand already has withdrawals deducted (see JournalProvider).
+  const balance = journal.cashBalance;
   const change = start ? (pnl / start) * 100 : 0;
   return (
     <div className="relative isolate min-h-screen">
@@ -129,7 +132,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
             <span className={cn(eyebrow, 'text-[9px] text-[#a7a3bb]')}>ACCOUNT BALANCE</span>
             <CountUp
               className="mt-1.5 font-mono text-[22px] font-bold tracking-[-0.05em]"
-              value={start + pnl}
+              value={balance}
               format={money}
             />
             <div className="flex items-center justify-between gap-1.5 text-[10.5px] text-muted">
@@ -230,6 +233,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               onClick={async () => {
                 try {
                   await authService.logout();
+      resetAnalytics();
                   router.replace('/login');
                 } catch (e) {
                   setLogoutError((e as Error).message);

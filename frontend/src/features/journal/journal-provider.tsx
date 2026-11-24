@@ -14,6 +14,7 @@ import { authService } from '@/features/auth/auth.api';
 import { tradeService } from '@/features/trades/trades.api';
 import { getAnalytics } from '@/features/analytics/analytics.api';
 import { withdrawalService } from '@/features/withdrawals/withdrawals.api';
+import { identifyUser } from '@/features/analytics/posthog';
 import { ApiError } from '@/lib/api-client';
 interface Journal {
   user: UserDto | null;
@@ -22,6 +23,8 @@ interface Journal {
   withdrawals: WithdrawalDto[];
   /** Sum of all recorded withdrawals, subtracted from the cash balance. */
   totalWithdrawn: number;
+  /** Single source of truth for cash on hand: capital + realised P&L - withdrawals. */
+  cashBalance: number;
   loading: boolean;
   error: string;
   refresh: () => Promise<void>;
@@ -70,6 +73,13 @@ export function JournalProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+  const userId = user?.id;
+  useEffect(() => {
+    if (user && userId) identifyUser(user);
+    // identify() sends an event, so only re-run when the account itself changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
+  const totalWithdrawn = withdrawals.reduce((sum, w) => sum + w.amount, 0);
   return (
     <Context.Provider
       value={{
@@ -77,7 +87,8 @@ export function JournalProvider({ children }: { children: ReactNode }) {
         trades,
         summary,
         withdrawals,
-        totalWithdrawn: withdrawals.reduce((sum, w) => sum + w.amount, 0),
+        totalWithdrawn,
+        cashBalance: (user?.startingBalance ?? 0) + (summary?.totalPnl ?? 0) - totalWithdrawn,
         loading,
         error,
         refresh,
