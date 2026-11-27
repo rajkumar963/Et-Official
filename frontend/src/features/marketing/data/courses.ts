@@ -1,4 +1,7 @@
 import { productPrice } from '@et-trader/shared';
+import type { StaticImageData } from 'next/image';
+import basicToAdvancedBanner from '../../../../public/courses/basic-to-advanced.jpg';
+import etStrategiesBanner from '../../../../public/courses/binary-et-strategies.png';
 
 /** Course catalogue shown on /courses, the landing page and /courses/[slug]. */
 export type CourseDirection = 'BASIC' | 'ADVANCED' | 'GOLD';
@@ -19,6 +22,7 @@ export interface Course {
   startDate: string;
   direction: CourseDirection;
   artworkTitle: string;
+  banner?: { src: StaticImageData; alt: string };
   price: number;
   oldPrice: number | null;
   topics: string[];
@@ -48,6 +52,10 @@ export const courses: Course[] = [
     description: 'ET live and OTC market strategies, money management, and trading psychology.',
     direction: 'BASIC',
     artworkTitle: 'BINARY MARKET',
+    banner: {
+      src: etStrategiesBanner,
+      alt: 'Binary Trading — ET Strategies premium course',
+    },
     price: productPrice('basic-to-advanced-course'),
     oldPrice: null,
     topics: [
@@ -138,6 +146,10 @@ export const courses: Course[] = [
       'A complete learning path from chart basics to advanced tools and market analysis.',
     direction: 'ADVANCED',
     artworkTitle: 'BINARY TRADING',
+    banner: {
+      src: basicToAdvancedBanner,
+      alt: 'Binary Trading — Basic to Advanced premium course',
+    },
     price: productPrice('advanced-to-pro-course'),
     oldPrice: null,
     topics: [

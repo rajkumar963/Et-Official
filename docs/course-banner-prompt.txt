@@ -1,0 +1,7 @@
+Mode: built-in image_gen edit
+Reference: IMG_20261127_185823_201.jpg (user supplied)
+Original banner: frontend/public/courses/basic-to-advanced.jpg
+Generated banner: frontend/public/courses/binary-et-strategies.png
+
+Final prompt:
+Use case: text-localization. Asset type: landscape course banner for a website. Input image 1 is the edit target. Create a matching ET Strategies course banner by changing only the words "BASIC TO ADVANCED" in the yellow strip to "ET STRATEGIES". Exact final text: top "BINARY TRADING", yellow strip "ET STRATEGIES", bottom "PREMIUM COURSE". Preserve the same man's identity, face, hair, sunglasses, black shirt, portrait placement, dark candlestick chart background, thin yellow border, white bold condensed typography and yellow framed bottom text. Keep the original landscape aspect ratio and all artwork visible. Center the replacement black text in the existing yellow strip, with strong legible type. No extra words, prices, dates, logos or watermark.

@@ -1,7 +1,7 @@
 /** Broker identities and account links for the Account and Update pages. */
 
 export type Broker = {
-  id: 'quotex' | 'binolla' | 'xm' | 'elefin';
+  id: 'quotex' | 'binolla' | 'xm' | 'elefin' | 'exness';
   name: string;
   logo?: string;
   domain: string;
@@ -132,7 +132,7 @@ export const forexPage: BrokerPageData = {
   title: 'Compare forex brokers.',
   titleAccent: 'Find your platform.',
   intro:
-    'Compare XM, and Elefin, review their account terms, then open the broker’s registration page. Log your positions in ET Official to keep track of your trading process.',
+    'Compare XM, Elefin, and Exness, review their account terms, then open the broker’s registration page. Log your positions in ET Official to keep track of your trading process.',
   brokers: [
     {
       id: 'xm',
@@ -163,6 +163,18 @@ export const forexPage: BrokerPageData = {
       ],
       minDeposit: 'See broker terms',
       affiliateUrl: 'https://partners.elefin.com/go/ETTRADER',
+    },
+    {
+      id: 'exness',
+      name: 'Exness Forex Broker',
+      domain: 'one.toexness.com',
+      linkType: 'partner',
+      tagline: 'Open an account with Exness',
+      description:
+        'Open your Exness account through our partner link. Review the available account options, trading platforms, and broker terms before registering.',
+      highlights: ['Partner registration', 'Account options', 'Trading platforms', 'Client area'],
+      minDeposit: 'See broker terms',
+      affiliateUrl: 'https://one.toexness.com/a/9txcy0aubz',
     },
   ],
   steps: openAccountSteps,

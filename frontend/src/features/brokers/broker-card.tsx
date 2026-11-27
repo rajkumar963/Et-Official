@@ -8,6 +8,7 @@ const logoBackground: Record<Broker['id'], string> = {
   binolla: 'border-[#426efb33] bg-[#090a11]',
   xm: 'border-[#ffffff44] bg-[#f5f5f8]',
   elefin: 'border-[#a78bfa33] bg-[#221b35] text-[#c4b5fd]',
+  exness: 'border-[#ffde2d55] bg-[#ffde2d] text-[#17160c]',
 };
 
 export function BrokerCard({ broker }: { broker: Broker }) {
@@ -41,7 +42,7 @@ export function BrokerCard({ broker }: { broker: Broker }) {
               className="font-display text-[24px] font-bold tracking-[-0.07em]"
               aria-label={broker.name}
             >
-              {broker.id === 'quotex' ? 'Qx' : 'E'}
+              {broker.id === 'quotex' ? 'Qx' : broker.id === 'exness' ? 'EX' : 'E'}
             </span>
           )}
         </span>

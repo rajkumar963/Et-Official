@@ -5,7 +5,7 @@ import { forexPage } from '@/features/brokers/data';
 export const metadata: Metadata = {
   title: 'Forex Trading — Open an Account',
   description:
-    'Compare XM, Alpari, and Elefin account options, open their registration links, and log your positions in ET Official. Includes trading updates and account information.',
+    'Compare XM, Elefin, and Exness account options, open their registration links, and log your positions in ET Official. Includes trading updates and account information.',
   alternates: { canonical: '/brokers/forex' },
 };
 

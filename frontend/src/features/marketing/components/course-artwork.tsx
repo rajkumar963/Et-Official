@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { cn } from '@/lib/cn';
 import type { Course, CourseDirection } from '../data/courses';
 
@@ -15,10 +16,33 @@ export function CourseArtwork({
   variant = 'card',
   className,
 }: {
-  course: Pick<Course, 'id' | 'direction' | 'level' | 'artworkTitle' | 'bestValue'>;
+  course: Pick<Course, 'id' | 'direction' | 'level' | 'artworkTitle' | 'bestValue' | 'banner'>;
   variant?: string;
   className?: string;
 }) {
+  if (course.banner) {
+    return (
+      <div
+        className={cn(
+          'relative aspect-[43/24] overflow-hidden border-b border-[#8b5cf644] bg-black',
+          className,
+        )}
+      >
+        <Image
+          src={course.banner.src}
+          alt={course.banner.alt}
+          fill
+          sizes={
+            variant === 'purchase'
+              ? '(max-width: 560px) calc(100vw - 40px), (max-width: 1020px) calc(100vw - 64px), 380px'
+              : '(max-width: 760px) calc(100vw - 40px), (max-width: 1200px) 50vw, 580px'
+          }
+          className="object-contain"
+        />
+      </div>
+    );
+  }
+
   const gradientId = `chart-${course.id}-${variant}`;
   return (
     <div
