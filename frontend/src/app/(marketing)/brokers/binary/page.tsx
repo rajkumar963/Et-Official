@@ -5,7 +5,7 @@ import { binaryPage } from '@/features/brokers/data';
 export const metadata: Metadata = {
   title: 'Binary Trading — Open an Account',
   description:
-    'Open a binary trading account with a broker we trust, then track every trade in your ET Official journal. Includes important updates and information before you start.',
+    'Compare Quotex and Binolla, open their account registration pages, and track your trading process in ET Official. Includes platform updates and account information.',
   alternates: { canonical: '/brokers/binary' },
 };
 

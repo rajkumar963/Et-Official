@@ -62,7 +62,7 @@ test('orders: checkout, payment submission, email review link, admin portal and 
     // Checkout config: price from the server, only networks with an address.
     const config = await buyer.get(`/api/v1/orders/checkout/${productId}`);
     assert.equal(config.status, 200);
-    assert.equal(config.body.data.product.price, 199);
+    assert.equal(config.body.data.product.price, 250);
     assert.deepEqual(config.body.data.networks, ['TRC20', 'BEP20']);
     assert.equal((await buyer.get('/api/v1/orders/checkout/nope')).status, 404);
 
@@ -80,7 +80,7 @@ test('orders: checkout, payment submission, email review link, admin portal and 
     assert.equal(created.status, 201);
     const order = created.body.data;
     assert.match(order.orderNumber, /^ET-[2-9A-HJ-NP-Z]{8}$/);
-    assert.equal(order.amount, 199);
+    assert.equal(order.amount, 250);
     assert.equal(order.accessEmail, 'buyer.access@gmail.com');
     assert.equal(order.walletAddress, process.env.USDT_TRC20_ADDRESS);
     assert.equal(order.accessUrl, null);
@@ -180,6 +180,7 @@ test('orders: checkout, payment submission, email review link, admin portal and 
       productId: 'advanced-to-pro-course',
       accessEmail: 'buyer.access@gmail.com',
     });
+    assert.equal(second.body.data.amount, 450);
     assert.equal(
       (
         await buyer

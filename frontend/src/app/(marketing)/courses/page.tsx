@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { SiteNavbar } from '@/features/marketing/components/site-navbar';
 import { SiteFooter } from '@/features/marketing/components/site-footer';
 import { CoursesSection, learningIntro } from '@/features/marketing/components/learning-sections';
+import { ForexCoursesSection } from '@/features/marketing/components/forex-courses-section';
 import {
   CourseDisclaimer,
   CourseFaq,
@@ -19,7 +20,7 @@ import { cn } from '@/lib/cn';
 export const metadata: Metadata = {
   title: 'Trading Courses',
   description:
-    'Explore Basic to Advanced and Advanced to Pro trading courses with lifetime access.',
+    'Explore Binary ET Strategies, Basic to Advanced Binary Trading, and the upcoming Forex Gold Masterclass.',
   alternates: { canonical: '/courses' },
 };
 
@@ -49,15 +50,21 @@ export default function CoursesPage() {
           <div className={cn(learningIntro, 'mb-[52px]')}>
             <span className={sectionLabel}>TRADING VIDEO COURSES</span>
             <h1>
-              Learn and progress <span className={gradientText}>step by step</span>
+              Binary strategies. <span className={gradientText}>Forex focus.</span>
             </h1>
             <p>
-              Start with essential chart reading, then explore advanced trading tools and concepts.
-              Pay in USDT and get lifetime access on Google Drive, shared to your Gmail.
+              Explore Binary ET Strategies and Basic to Advanced Binary Trading, with lifetime
+              access to recorded lessons. Our Forex Gold Masterclass is coming soon.
             </p>
           </div>
 
-          <CoursesSection />
+          <section aria-labelledby="binary-courses-heading">
+            <h2 id="binary-courses-heading" className={cn(courseSectionTitle, 'mb-6')}>
+              Binary trading courses
+            </h2>
+            <CoursesSection />
+          </section>
+          <ForexCoursesSection className="mt-16" />
 
           <section
             aria-labelledby="includes"
@@ -67,7 +74,7 @@ export default function CoursesPage() {
             )}
           >
             <div>
-              <span className={sectionLabel}>BOTH COURSES</span>
+              <span className={sectionLabel}>BINARY COURSES</span>
               <h2 id="includes" className={cn(courseSectionTitle, 'mt-3')}>
                 What you get with each course
               </h2>

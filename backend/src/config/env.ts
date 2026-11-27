@@ -36,6 +36,21 @@ const schema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CALLBACK_URL: z.url().default('http://localhost:4000/api/v1/auth/google/callback'),
+  /** Contact form destination. Credentials stay on the backend, separate from Google sign-in. */
+  GOOGLE_SHEETS_SPREADSHEET_ID: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z0-9_-]*$/)
+    .default(''),
+  GOOGLE_SHEETS_TAB: z.string().trim().max(100).default(''),
+  GOOGLE_APPLICATION_CREDENTIALS: z.string().trim().default(''),
+  /** Apps Script web app alternative to a service-account credential file. */
+  GOOGLE_SHEETS_WEB_APP_URL: z
+    .string()
+    .trim()
+    .regex(/^$|^https:\/\/script\.google\.com\/macros\/s\/[a-zA-Z0-9_-]+\/exec$/)
+    .default(''),
+  GOOGLE_SHEETS_WEB_APP_SECRET: z.union([z.literal(''), z.string().min(32)]).default(''),
   /** Resend API key (https://resend.com/api-keys). Without it, non-production prints OTP codes to the console. */
   RESEND_API_KEY: z
     .string()

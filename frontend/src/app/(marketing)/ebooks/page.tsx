@@ -8,18 +8,17 @@ import {
   CourseDisclaimer,
   CourseFaq,
   CourseIncludes,
-  EnrollmentSteps,
   courseCard,
   courseSectionTitle,
 } from '@/features/marketing/components/course-info';
-import { ebookFaqs, ebookIncludes, ebookSteps } from '@/features/marketing/data/ebooks';
+import { ebookFaqs, ebookIncludes } from '@/features/marketing/data/ebooks';
 import { gradientText, home, sectionLabel } from '@/features/marketing/marketing-styles';
 import { cn } from '@/lib/cn';
 
 export const metadata: Metadata = {
   title: 'Trading E-books',
   description:
-    'Trading e-books on price action patterns, candlestick and chart patterns (Hindi edition) and a complete gold (XAUUSD) strategy guide.',
+    'Coming soon: trading e-books on price action, candlestick and chart patterns (Hindi edition), and gold (XAUUSD) strategy.',
   alternates: { canonical: '/ebooks' },
 };
 
@@ -32,13 +31,13 @@ export default function EbooksPage() {
       <main className="min-h-screen px-6 pt-[150px] pb-[110px] max-[560px]:px-[18px] max-[560px]:pt-[120px]">
         <div className="mx-auto max-w-[1192px]">
           <div className={cn(learningIntro, 'mb-[52px]')}>
-            <span className={sectionLabel}>TRADING E-BOOKS</span>
+            <span className={sectionLabel}>TRADING E-BOOKS · COMING SOON</span>
             <h1>
               Learn the patterns. <span className={gradientText}>Keep the playbook.</span>
             </h1>
             <p>
-              Focused guides on price action, candlestick and chart patterns, and gold strategy — as
-              a personalized PDF you can read anywhere and come back to before every session.
+              Our trading bookshelf is on its way. Explore the upcoming guides to price action,
+              candlestick patterns, and gold strategy. All e-books are coming soon.
             </p>
           </div>
 
@@ -54,7 +53,7 @@ export default function EbooksPage() {
             <div>
               <span className={sectionLabel}>EVERY E-BOOK</span>
               <h2 id="includes" className={cn(courseSectionTitle, 'mt-3')}>
-                What you get with each e-book
+                Inside the upcoming e-books
               </h2>
               <p className="mt-3 text-[14px] leading-[1.7] text-[#a09db4]">
                 A reference you can keep open next to your charts: clear rules, worked chart
@@ -66,13 +65,6 @@ export default function EbooksPage() {
               icons={[FileText, Smartphone, Download, ChartLine]}
               className="grid-cols-2 max-[560px]:grid-cols-1"
             />
-          </section>
-
-          <section aria-labelledby="how-it-works" className="mt-20">
-            <h2 id="how-it-works" className={cn(courseSectionTitle, 'mb-6 text-center')}>
-              How to get your e-book
-            </h2>
-            <EnrollmentSteps steps={ebookSteps} />
           </section>
 
           <section aria-labelledby="faq" className="mx-auto mt-20 max-w-[820px]">

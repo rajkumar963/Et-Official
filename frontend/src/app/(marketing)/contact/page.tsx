@@ -45,7 +45,7 @@ export default async function ContactPage({
 
 Gmail address for Google Drive access: `
     : ebook
-      ? `Hi, I'd like to buy the e-book "${ebook.title}" (${ebook.price} USDT). Please send me the USDT payment details.`
+      ? `Hi, I'd like to know when the e-book "${ebook.title}" will launch. Please share any updates.`
       : '';
 
   return (

@@ -8,26 +8,26 @@ export function ContactSection() {
       className="mx-auto max-w-[1240px] scroll-mt-[100px] px-6 pt-[35px] pb-[75px] max-[560px]:px-[18px] max-[560px]:pt-5 max-[560px]:pb-[60px]"
       id="contact"
     >
-      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-6 rounded-[24px] border border-[#8b5cf644] p-[34px] shadow-[0_20px_70px_#0005] [background:radial-gradient(50%_120%_at_0%_0%,#8b5cf620,transparent_80%),linear-gradient(120deg,#11101b,#0a0b12_72%)] max-[820px]:grid-cols-[auto_minmax(0,1fr)] max-[820px]:gap-[18px] max-[820px]:p-6 max-[560px]:grid-cols-1 max-[560px]:p-[22px]">
+      <div className="grid grid-cols-[56px_minmax(0,1fr)_auto] items-center gap-6 rounded-[20px] border border-[#8b5cf638] p-7 shadow-[0_20px_70px_#0005] [background:radial-gradient(50%_180%_at_0%_0%,#8b5cf620,transparent_80%),linear-gradient(120deg,#14111f,#0b0c13_72%)] max-[820px]:grid-cols-[56px_minmax(0,1fr)] max-[820px]:gap-5 max-[560px]:gap-x-4 max-[560px]:p-6">
         <div
-          className="grid size-[58px] place-items-center rounded-[18px] border border-[#8b5cf655] bg-[#8b5cf620] text-violet-3"
+          className="grid size-14 place-items-center rounded-[15px] border border-[#a78bfa44] bg-[#8b5cf61c] text-[#c4b5fd] max-[560px]:self-start"
           aria-hidden="true"
         >
           <MessageCircle size={22} />
         </div>
         <div>
           <span className={sectionLabel}>WE ARE HERE TO HELP</span>
-          <h2 className="mt-[9px] font-display text-[length:clamp(24px,3vw,35px)] leading-[1.15] tracking-[-0.04em]">
+          <h2 className="mt-2 font-display text-[length:clamp(24px,3vw,35px)] leading-[1.2] font-semibold tracking-[-0.04em]">
             Let&apos;s talk about <span className={gradientText}>your next step.</span>
           </h2>
-          <p className="mt-[9px] max-w-[620px] text-[13px] leading-[1.65] text-[#a09db4]">
+          <p className="mt-3 max-w-[620px] text-[16px] leading-[1.65] text-[#a6a2b7]">
             Questions about ET Official, the courses, or the e-books? Send us a message from our
             contact page.
           </p>
         </div>
         <Link
           href="/contact"
-          className="inline-flex items-center justify-center gap-2 rounded-[11px] border border-[#a78bfa66] bg-[linear-gradient(110deg,#6d28d9,#8b5cf6)] px-[17px] py-3 text-[13px] font-bold whitespace-nowrap text-white shadow-[0_8px_24px_#8b5cf633] hover:-translate-y-px hover:brightness-110 max-[820px]:col-[2] max-[820px]:justify-self-start max-[560px]:col-[1]"
+          className="inline-flex min-h-12 min-w-[136px] items-center justify-center gap-2 rounded-[11px] border border-[#ffffff24] bg-[linear-gradient(110deg,#836234,#785569_40%,#168aa6_80%,#20b9d6)] px-5 py-3 text-[14px] font-semibold whitespace-nowrap text-white shadow-[0_4px_22px_#22d3ee20] transition-[filter,box-shadow] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan max-[820px]:col-start-2 max-[820px]:justify-self-start max-[560px]:col-span-2 max-[560px]:w-full"
         >
           Contact us <ArrowUpRight size={17} />
         </Link>

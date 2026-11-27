@@ -1,14 +1,11 @@
-/**
- * Affiliate broker data for the "Account and Update" pages.
- *
- * ▶ TO GO LIVE: replace every `affiliateUrl` below with YOUR real affiliate /
- *   referral link. They are placeholders right now. You can also edit the broker
- *   names, highlights, min deposit, and the `updates` list — nothing else needs
- *   to change for the pages to render.
- */
+/** Broker identities and account links for the Account and Update pages. */
 
 export type Broker = {
+  id: 'quotex' | 'binolla' | 'xm' | 'alpari';
   name: string;
+  logo?: string;
+  domain: string;
+  linkType: 'partner' | 'official';
   /** One-line positioning shown under the name. */
   tagline: string;
   /** 2–3 sentence description. */
@@ -16,9 +13,7 @@ export type Broker = {
   /** Short selling points shown as a checklist. */
   highlights: string[];
   minDeposit: string;
-  /** Optional ribbon, e.g. "Most popular" or "Beginner friendly". */
-  badge?: string;
-  /** ▶ YOUR affiliate / referral link. Replace the placeholder. */
+  /** Existing referral URL, or the broker's own registration URL for an official link. */
   affiliateUrl: string;
 };
 
@@ -59,7 +54,7 @@ export type BrokerPageData = {
 const openAccountSteps = [
   {
     title: 'Open your account',
-    text: 'Tap "Create account" on a broker below — it opens their official sign-up through our partner link. Register with your email or Google.',
+    text: 'Choose "Visit broker" to open the broker’s registration page. The card identifies whether you are using a partner link or an official account link.',
   },
   {
     title: 'Verify & fund',
@@ -77,29 +72,34 @@ const openAccountSteps = [
 export const binaryPage: BrokerPageData = {
   kind: 'binary',
   eyebrow: 'BINARY TRADING',
-  title: 'Open a binary trading account',
-  titleAccent: 'with a broker we trust.',
+  title: 'Compare binary brokers.',
+  titleAccent: 'Explore your options.',
   intro:
     'Fixed-payout trading on short time frames. Create your account through our partner link below, then track every trade in your ET Official journal to see what’s really working.',
   brokers: [
     {
+      id: 'quotex',
       name: 'Quotex',
-      tagline: 'Fast, beginner-friendly binary platform',
+      domain: 'quotex.com',
+      linkType: 'partner',
+      tagline: 'Digital options on web and mobile',
       description:
-        'A clean web platform with a low entry barrier and a free demo. Popular with newer traders for its simple interface and quick deposits/withdrawals.',
-      highlights: ['Free unlimited demo', 'Low minimum deposit', 'Web + mobile', 'Fast withdrawals'],
+        'Explore the trading platform with a demo account, review its terms, and use the partner registration link when you are ready to create an account.',
+      highlights: ['Demo account', 'Digital options', 'Web platform', 'Mobile access'],
       minDeposit: '$10',
-      badge: 'Most popular',
       affiliateUrl: 'https://broker-qx.pro/sign-up/?lid=2427717',
     },
     {
+      id: 'binolla',
       name: 'Binolla',
-      tagline: 'Fixed-time digital options + MT5',
+      logo: '/brokers/binolla.png',
+      domain: 'binolla.com',
+      linkType: 'partner',
+      tagline: 'Digital options and charting tools',
       description:
-        'Short-term digital (fixed-time) options across many assets with high payouts, plus forex, metals and energy on MetaTrader 5. Offshore-registered — start small and verify the details yourself before funding.',
-      highlights: ['High payout digital options', 'MT5 for forex & metals', 'Many assets', 'Demo account'],
-      minDeposit: '$10',
-      badge: 'New',
+        'Access a digital-options platform with demo and real accounts. Review the available markets and the account conditions on Binolla before signing up.',
+      highlights: ['Demo account', 'Digital options', 'Charting tools', 'Web and mobile'],
+      minDeposit: 'See broker terms',
       affiliateUrl: 'https://binolla.com/signup?lid=30080',
     },
   ],
@@ -129,31 +129,36 @@ export const binaryPage: BrokerPageData = {
 export const forexPage: BrokerPageData = {
   kind: 'forex',
   eyebrow: 'FOREX TRADING',
-  title: 'Open a forex trading account',
-  titleAccent: 'with our partner brokers.',
+  title: 'Compare forex brokers.',
+  titleAccent: 'Find your platform.',
   intro:
-    'Trade currency pairs, metals and more. Create your account through our partner link below, then log every position in your ET Official journal to sharpen your edge over time.',
+    'Compare XM and Alpari, review their account terms, then open the broker’s registration page. Log your positions in ET Official to keep track of your trading process.',
   brokers: [
     {
-      // ▶ TODO: confirm the broker name for the affs.click link (tell Claude / edit here).
-      name: 'Partner Forex Broker',
-      tagline: 'Our recommended forex partner',
+      id: 'xm',
+      name: 'XM Forex Broker',
+      logo: '/brokers/xm.svg',
+      domain: 'xm.com',
+      linkType: 'partner',
+      tagline: 'Forex and CFD trading platforms',
       description:
-        'Our featured forex partner — open your account through the link, then track every position in your ET Official journal. Always verify the broker’s terms and your local regulations before funding.',
-      highlights: ['Forex & CFDs', 'Partner sign-up link', 'Demo to practice', 'Trade from mobile'],
-      minDeposit: '—',
-      badge: 'Recommended',
+        'Explore XM’s forex and CFD markets, trading platforms, and account options. Our existing referral link opens XM’s account registration page.',
+      highlights: ['Forex & CFDs', 'MetaTrader platforms', 'Demo accounts', 'Mobile access'],
+      minDeposit: 'See broker terms',
       affiliateUrl: 'https://affs.click/iX8vA',
     },
     {
-      name: 'Elefin',
-      tagline: 'MT5 forex & CFD trading',
+      id: 'alpari',
+      name: 'Alpari Forex Broker',
+      logo: '/brokers/alpari.svg',
+      domain: 'alpari.com',
+      linkType: 'official',
+      tagline: 'Forex and CFD account options',
       description:
-        'Forex and CFD trading on MetaTrader 5 with Standard and PRO account options. Offshore-registered, so trade responsibly and verify the details before funding.',
-      highlights: ['MetaTrader 5', 'Forex & CFDs', 'Standard & PRO accounts', 'Demo available'],
-      minDeposit: '$50',
-      badge: 'Partner',
-      affiliateUrl: 'https://partners.elefin.com/go/ETTRADER',
+        'Compare Alpari’s account types and trading platforms, then register directly on Alpari’s account page. Available options depend on your region.',
+      highlights: ['Forex & CFDs', 'Demo accounts', 'Trading platforms', 'Official registration'],
+      minDeposit: 'See broker terms',
+      affiliateUrl: 'https://trade.alpari.com/signup',
     },
   ],
   steps: openAccountSteps,

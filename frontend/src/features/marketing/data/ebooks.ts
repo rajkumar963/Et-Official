@@ -84,13 +84,18 @@ export const ebookSteps = [
 
 export const ebookFaqs = [
   {
+    question: 'When can I buy the e-books?',
+    answer:
+      'All e-books are coming soon. A launch date has not been announced yet. Follow our Telegram community for updates.',
+  },
+  {
     question: 'What format are the e-books?',
     answer: 'Each e-book is a personalized PDF that you can read on any phone, tablet or computer.',
   },
   {
-    question: 'How do I pay?',
+    question: 'Can I order an e-book now?',
     answer:
-      'Payment is in USDT on TRC20, BEP20 or ERC20. Checkout shows the exact amount, the wallet address and a QR code.',
+      'Orders are not open yet. Purchase and delivery details will be shared when the e-books launch.',
   },
   {
     question: 'Is there a Hindi edition?',

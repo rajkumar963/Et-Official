@@ -18,6 +18,7 @@ export default async function CheckoutPage({ params }: Props) {
   const { productId } = await params;
   const product = getProduct(productId);
   if (!product) notFound();
+  if (product.comingSoon) redirect(`/ebooks#${product.id}`);
   // Buying requires an account so the purchase shows up in My courses.
   const jar = await cookies();
   if (!jar.has('tj_access') && !jar.has('tj_refresh'))

@@ -61,7 +61,7 @@ npm install
 npm run build -w @et-trader/shared
 ```
 
-Copy `backend/.env.example` to `backend/.env`, and `frontend/.env.example` to `frontend/.env.local`. Generate a unique secret with `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` and put it in `JWT_ACCESS_SECRET`. Set `NEXT_PUBLIC_CONTACT_EMAIL` in the frontend env file to enable the contact form. Local environment files are ignored by Git; never commit secrets. The build session has already created local env files with a random secret.
+Copy `backend/.env.example` to `backend/.env`, and `frontend/.env.example` to `frontend/.env.local`. Generate a unique secret with `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` and put it in `JWT_ACCESS_SECRET`. Configure Google Sheets below to enable contact message delivery. Local environment files are ignored by Git; never commit secrets. The build session has already created local env files with a random secret.
 
 Start your installed MongoDB, or run:
 
@@ -104,6 +104,48 @@ The default local URI uses `127.0.0.1` to avoid IPv6 resolution mismatches on Wi
 The backend generates and validates a short-lived HttpOnly state cookie, exchanges the code server-side and verifies Google's identity token and verified email. An email/password account cannot be silently linked by matching email. Missing Google credentials do not prevent email authentication. A real OAuth round trip requires your Google credentials and consent configuration.
 
 ## API and authentication
+
+### Contact form and Google Sheets
+
+The public contact form submits to `POST /api/v1/contact`. A success response is returned only after Google Sheets confirms that a row was appended. Sign-in is not required. The endpoint validates and limits messages to five per IP per 15 minutes; failed submissions remain in the form so visitors can retry.
+
+#### Apps Script setup (no service-account key needed)
+
+The backend also supports the supplied simple `doPost` script: it sends the selected topic as both `help` and `topic`, and accepts `{ "ok": true }` after the script appends a row. For that script, set only `GOOGLE_SHEETS_WEB_APP_URL` to the deployed `/exec` URL; `GOOGLE_SHEETS_WEB_APP_SECRET` can remain empty. If a secret is configured, it is included in the request for scripts that check it. Optional spreadsheet and row metadata are checked when returned. A rejected response, login page or network failure does not count as a successful submission.
+
+The script in [backend/google-apps-script/Code.gs](backend/google-apps-script/Code.gs) is configured for spreadsheet `16U9lTOd0e5iEWExcQ3qIJQSjmQakE-OQ-oYjURhpXpU`, tab ID `0` from the supplied link. It adds headers only when the tab is empty and appends new messages without replacing existing rows.
+
+1. Open the destination sheet and choose **Extensions → Apps Script**. Replace the default `Code.gs` with the contents of the repository file, then save.
+2. Choose `setupContactSheet` in the editor and click **Run**. Authorize the script with the Google account that owns or can edit this sheet. This prepares the headers and generates a shared secret.
+3. Open **Project Settings → Script properties**. Copy `CONTACT_SHARED_SECRET` into the backend's `GOOGLE_SHEETS_WEB_APP_SECRET` environment variable. Keep this value on the backend.
+4. Choose **Deploy → New deployment → Web app**. Set **Execute as: Me**, **Who has access: Anyone**, then deploy. These settings let the backend call the script without an interactive Google login; the script checks the shared secret on every write. See [Google's web app deployment guide](https://developers.google.com/apps-script/guides/web).
+5. Copy the deployed URL ending in `/exec` into `GOOGLE_SHEETS_WEB_APP_URL` in the backend environment. Set `GOOGLE_SHEETS_SPREADSHEET_ID=16U9lTOd0e5iEWExcQ3qIJQSjmQakE-OQ-oYjURhpXpU` and restart the backend. Use the `/exec` deployment URL, not the editor link or `/dev` test URL.
+6. Submit a clearly labelled test enquiry from `/contact` and confirm one new row appears. Apps Script returns success only after flushing the write; the backend checks that the acknowledgement names this spreadsheet and a saved row.
+
+When modifying deployed Apps Script code later, use **Deploy → Manage deployments → Edit → New version → Deploy**. Saving in the editor alone does not update the deployed web app.
+
+The server follows Google's Content Service redirect and reports a delivery error for login pages, invalid JSON, rejected secrets, and failed writes. It does not retry append requests automatically. The prior service-account setup below remains available when `GOOGLE_SHEETS_WEB_APP_URL` is empty.
+
+#### Service-account alternative
+
+1. Enable the Google Sheets API in your Google Cloud project and create a service account. This is separate from the Google sign-in OAuth client.
+2. Use the first visible tab in your spreadsheet, or set `GOOGLE_SHEETS_TAB` to a specific tab name. Put these headers in row 1: `Timestamp (UTC)`, `Name`, `Email`, `Topic`, `Message`.
+3. Share only this spreadsheet with the service account's email as **Editor**.
+4. Store the service-account JSON privately, for example at `backend/.secrets/google-sheets-service-account.json` locally. `.secrets/` is ignored by Git. On your host, use a secret file mount.
+5. Set the following in the **backend** environment, then restart the backend:
+
+   ```dotenv
+   # ID between /d/ and /edit in the spreadsheet URL, not the full URL.
+   GOOGLE_SHEETS_SPREADSHEET_ID=your-spreadsheet-id
+   # Optional: leave blank to use the first visible tab.
+   GOOGLE_SHEETS_TAB=
+   # Absolute path to the private JSON file on the machine running the backend.
+   GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/google-sheets-service-account.json
+   ```
+
+Google credentials must never be placed in frontend environment variables. Each message is appended in the header order above using `valueInputOption=RAW`, so user input is stored as text rather than interpreted as formulas. See the [Google Sheets append API](https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/append).
+
+Configure either the Apps Script deployment URL (and shared secret if the deployed script requires it) or the service-account credential file. Until one method is configured, the form reports that delivery is unavailable. No message is reported as sent or silently discarded. Test the live connection with a clearly labelled enquiry after configuring it, and check that exactly one row appears.
 
 All APIs live under `/api/v1`. Responses are `{ data: ... }` or `{ error: { message: ... } }`.
 

@@ -10,5 +10,6 @@ export const checkoutHref = (product: { id: string }) =>
 /** "Enroll now" on courses. */
 export const enrollHref = checkoutHref;
 
-/** "Get e-book" on e-books. */
-export const ebookEnquiryHref = checkoutHref;
+/** Upcoming e-books are previewed in the catalogue until orders open. */
+export const ebookEnquiryHref = (ebook: { id: string }) =>
+  `/ebooks#${encodeURIComponent(ebook.id)}`;

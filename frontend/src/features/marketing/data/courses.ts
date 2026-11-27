@@ -1,7 +1,7 @@
 import { productPrice } from '@et-trader/shared';
 
 /** Course catalogue shown on /courses, the landing page and /courses/[slug]. */
-export type CourseDirection = 'BASIC' | 'ADVANCED';
+export type CourseDirection = 'BASIC' | 'ADVANCED' | 'GOLD';
 
 export interface CourseModule {
   title: string;
@@ -17,6 +17,7 @@ export interface Course {
   title: string;
   description: string;
   direction: CourseDirection;
+  artworkTitle: string;
   price: number;
   oldPrice: number | null;
   topics: string[];
@@ -35,142 +36,208 @@ const sharedRequirements = [
   'A demo account is recommended for practising before trading real money',
 ];
 
+/** Product IDs stay stable so existing purchases retain their access. */
 export const courses: Course[] = [
   {
     id: 'basic-to-advanced-course',
     number: '01',
-    level: 'BASIC TO ADVANCED',
-    title: 'Basic to Advanced Trading Course',
-    description: 'Build chart reading, strategy, risk management and trading discipline.',
+    level: 'ET STRATEGIES',
+    title: 'Binary ET Strategies',
+    description: 'ET live and OTC market strategies, money management, and trading psychology.',
     direction: 'BASIC',
+    artworkTitle: 'BINARY MARKET',
     price: productPrice('basic-to-advanced-course'),
     oldPrice: null,
     topics: [
-      'Candlestick types and patterns',
-      'Support, resistance and trend lines',
-      'Market behavior and zones',
-      'Gaps and retests',
-      'Money management and psychology',
+      'Introduction & building your trading plan',
+      'ET money management',
+      'ET live market strategy',
+      'ET OTC market strategy',
+      'Emotion control & trading psychology',
+      'Personal experience & practical lessons',
     ],
     bestValue: false,
-    tagline: 'Start with chart basics and build toward a structured trading process.',
+    tagline:
+      'Build a trading plan around ET strategies, money management, and emotional discipline.',
     overview: [
-      'This course covers the foundations shown in the course outline, from candles, support and resistance, and trend lines to chart patterns, market behavior, and risk management.',
-      'It also covers trading psychology, emotional control, avoiding overtrading, and situations when it may be better not to trade.',
+      'Binary ET Strategies introduces the course, a structured trading plan, and the money-management principles used throughout the lessons.',
+      'Study ET live-market and OTC-market strategies, then work on emotional control and trading psychology. Personal experience and practical lessons connect the topics to a repeatable process.',
     ],
     outcomes: [
-      'Identify candle types and common candlestick patterns',
-      'Mark support, resistance, trend lines, and chart zones',
-      'Understand gap-up and gap-down moves and retest concepts',
-      'Recognize bullish, bearish, and sideways market behavior',
-      'Apply money management and work on emotional discipline',
+      'Build a trading plan before entering a session',
+      'Understand ET money-management principles',
+      'Study the ET live-market strategy',
+      'Study the ET OTC-market strategy',
+      'Recognize emotional habits and develop trading discipline',
+      'Reflect on practical lessons and personal experience',
     ],
     modules: [
       {
-        title: 'Candles and chart patterns',
-        summary: 'Read candles and recognize the patterns highlighted in the course outline.',
-        points: ['Candle types', 'Candlestick patterns', 'Candlestick psychology'],
+        title: 'Introduction & your trading plan',
+        summary: 'Understand the course and put a plan around your trading.',
+        points: ['Course introduction', 'How to build a trading plan', 'Preparing for a session'],
       },
       {
-        title: 'Levels, trend lines and zones',
-        summary: 'Build a chart with key levels and areas to watch.',
-        points: ['Support and resistance', 'Trend lines', 'Zone marking and retest zones'],
-      },
-      {
-        title: 'Price behavior',
-        summary: 'Study common market conditions and price reactions.',
+        title: 'ET money management',
+        summary: 'Make money management part of the plan.',
         points: [
-          'Gap-up and gap-down trading',
-          'Retest candle and retest-zone concepts',
-          'Bullish, bearish, and sideways market behavior',
+          'ET money-management approach',
+          'Managing exposure',
+          'Reviewing your risk decisions',
         ],
       },
       {
-        title: 'Tools and risk management',
-        summary: 'Use chart tools with a focus on managing risk.',
-        points: ['Indicators, tools, tips, and tricks', 'Money management', 'Compounding concepts'],
+        title: 'ET live market strategy',
+        summary: 'Study the ET approach to live-market trading.',
+        points: ['Live-market strategy concepts', 'Reading the setup', 'Applying the trading plan'],
       },
       {
-        title: 'Psychology and discipline',
-        summary: 'Build habits for making more deliberate trading decisions.',
+        title: 'ET OTC market strategy',
+        summary: 'Study the ET approach to OTC-market trading.',
         points: [
-          'Psychology and emotional control',
-          'How to stop overtrading',
-          'When not to trade and lessons from personal experience',
+          'OTC-market strategy concepts',
+          'Recognizing trading conditions',
+          'Reviewing your decisions',
+        ],
+      },
+      {
+        title: 'Emotion control & psychology',
+        summary: 'Develop habits for calmer trading decisions.',
+        points: [
+          'Emotional control',
+          'Trading psychology',
+          'Avoiding impulsive decisions and overtrading',
+        ],
+      },
+      {
+        title: 'Personal experience & practical lessons',
+        summary: 'Connect the strategy lessons with personal trading experience.',
+        points: [
+          'Lessons from personal experience',
+          'Common trading mistakes',
+          'Using your journal to reflect and improve',
         ],
       },
     ],
     audience: [
-      'Newer traders who want a structured foundation',
-      'Traders who want to improve chart reading and risk habits',
-      'Learners who want to study market behavior and trading psychology',
+      'Binary traders interested in ET strategies',
+      'Traders working on money management and psychology',
+      'Learners looking for a structured live-market and OTC-market approach',
     ],
     requirements: sharedRequirements,
   },
   {
     id: 'advanced-to-pro-course',
     number: '02',
-    level: 'ADVANCED TO PRO',
-    title: 'Advanced to Pro Trading Course',
-    description: 'Explore advanced tools, indicators, and concepts for chart analysis.',
+    level: 'BASIC TO ADVANCED',
+    title: 'Basic to Advanced Binary Trading',
+    description:
+      'A complete learning path from chart basics to advanced tools and market analysis.',
     direction: 'ADVANCED',
+    artworkTitle: 'BINARY TRADING',
     price: productPrice('advanced-to-pro-course'),
     oldPrice: null,
     topics: [
-      'News reading',
-      'Advanced order blocks',
-      'Gann Box and oscillators',
-      'Advanced RSI and Fibonacci',
-      'FVG and ETC advanced timeframes',
+      'Candlestick types, patterns & psychology',
+      'Support, resistance, trend lines & zones',
+      'Market behavior, gaps & retests',
+      'Indicators, tools & money management',
+      'News reading & advanced order blocks',
+      'Gann Box, oscillators, RSI & Fibonacci',
+      'FVG & ETC on 1, 5 and 15 minute charts',
+      'Trading psychology & emotional control',
     ],
     bestValue: true,
-    tagline: 'Take your existing chart skills further with the advanced topics in the course outline.',
+    tagline:
+      'Learn binary trading step by step, from candlestick foundations to advanced chart concepts.',
     overview: [
-      'This course covers advanced chart tools and concepts listed in the provided outline, including news reading, advanced order blocks, Gann Box, and advanced oscillators.',
-      'It also introduces advanced RSI and Fibonacci, the FVG concept, and ETC advanced charting on 1, 5, and 15 minute timeframes.',
+      'Start with candle types, candlestick patterns and psychology. Build on those foundations with support and resistance, trend lines, zones, market behavior, gaps, and retests.',
+      'Progress into news reading, advanced order blocks, Gann Box, oscillators, RSI, Fibonacci, FVG, and ETC across multiple timeframes. Money management and emotional discipline run throughout the course.',
     ],
     outcomes: [
-      'Read news as part of market analysis',
-      'Study advanced order blocks and Gann Box tools',
-      'Explore advanced oscillator, RSI, and Fibonacci concepts',
-      'Understand the FVG concept',
-      'Apply ETC advanced concepts across 1, 5, and 15 minute charts',
+      'Read candle types and common candlestick patterns',
+      'Mark support, resistance, trend lines and chart zones',
+      'Understand market behavior, gaps and retest concepts',
+      'Study tools, indicators and money management',
+      'Explore news reading, advanced order blocks and Gann Box',
+      'Work with advanced RSI, Fibonacci, FVG and ETC concepts',
+      'Develop trading discipline and emotional control',
     ],
     modules: [
       {
-        title: 'News reading',
-        summary: 'Include news reading in your trading analysis.',
-        points: ['News reading concepts and context'],
+        title: 'Candlesticks & chart foundations',
+        summary: 'Build the foundations for reading a trading chart.',
+        points: ['Candle types', 'Candlestick patterns', 'Candlestick psychology'],
       },
       {
-        title: 'Advanced chart tools',
-        summary: 'Explore the advanced tools named in the course outline.',
-        points: ['Advanced order blocks', 'Advanced Gann Box', 'Advanced oscillator'],
+        title: 'Support, resistance & zones',
+        summary: 'Understand key levels and the way price reacts around them.',
+        points: ['Support and resistance', 'Trend lines', 'Zone marking and retest zones'],
       },
       {
-        title: 'Advanced indicators',
-        summary: 'Study advanced versions of familiar technical tools.',
-        points: ['Advanced RSI', 'Advanced Fibonacci'],
+        title: 'Market behavior, gaps & retests',
+        summary: 'Study common market conditions and price reactions.',
+        points: [
+          'Bullish, bearish and sideways markets',
+          'Gap-up and gap-down concepts',
+          'Retest candles and retest zones',
+        ],
       },
       {
-        title: 'FVG and ETC advanced',
-        summary: 'Explore the FVG concept and ETC advanced timeframes.',
-        points: ['FVG concept', 'ETC advanced on 1 minute charts', 'ETC advanced on 5 and 15 minute charts'],
+        title: 'Tools & money management',
+        summary: 'Bring chart tools together with risk awareness.',
+        points: ['Indicators, tools, tips and tricks', 'Money management', 'Compounding concepts'],
+      },
+      {
+        title: 'News reading & advanced chart tools',
+        summary: 'Progress into the advanced analysis topics.',
+        points: ['News reading', 'Advanced order blocks', 'Gann Box and oscillators'],
+      },
+      {
+        title: 'RSI, Fibonacci & FVG',
+        summary: 'Study advanced versions of familiar chart concepts.',
+        points: ['Advanced RSI', 'Advanced Fibonacci', 'Fair value gap concepts'],
+      },
+      {
+        title: 'ETC & multiple timeframes',
+        summary: 'Study the ETC approach across the course timeframes.',
+        points: ['ETC on 1 minute charts', 'ETC on 5 minute charts', 'ETC on 15 minute charts'],
+      },
+      {
+        title: 'Psychology & personal experience',
+        summary: 'Build discipline into your trading process.',
+        points: [
+          'Emotional control',
+          'Avoiding overtrading and knowing when not to trade',
+          'Practical lessons from personal experience',
+        ],
       },
     ],
     audience: [
-      'Traders already comfortable reading charts',
-      'Learners who want to explore advanced indicators and chart concepts',
-      'Traders interested in the tools and timeframes covered in the outline',
+      'Beginners who want a complete binary-trading foundation',
+      'Traders ready to progress from basic to advanced chart concepts',
+      'Learners working on money management and trading discipline',
     ],
-    requirements: [
-      'Basic familiarity with charts and trading concepts',
-      'A Gmail account to receive Google Drive access',
-      'A demo account is recommended for practising before trading real money',
-    ],
+    requirements: sharedRequirements,
   },
 ];
 
+/** A launch preview only: no checkout product or price until enrollment opens. */
+export const forexMasterclass = {
+  id: 'forex-gold-masterclass',
+  title: 'Forex Gold Masterclass',
+  direction: 'GOLD' as const,
+  level: 'GOLD MASTERCLASS',
+  artworkTitle: 'FOREX TRAINING',
+  bestValue: false,
+  description:
+    'Dedicated forex training focused on gold (XAUUSD). Enrollment and the full course outline will be announced at launch.',
+  topics: [
+    'Forex & gold (XAUUSD)',
+    'Trading plans & market analysis',
+    'Risk management & trading discipline',
+  ],
+};
 export function getCourse(slug: string) {
   return courses.find((course) => course.id === slug);
 }
@@ -222,7 +289,7 @@ export const courseFaqs = [
   {
     question: 'Do I need to be an experienced trader?',
     answer:
-      'The Basic to Advanced course starts with foundational topics. Practise new ideas on a demo account before trading real money.',
+      'Basic to Advanced Binary Trading starts with foundational topics. Practise new ideas on a demo account before trading real money.',
   },
   {
     question: 'Will this course make me profitable?',

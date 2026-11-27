@@ -8,7 +8,6 @@ import {
   Check,
   ChartNoAxesCombined,
   TrendingUp,
-  ShieldCheck,
   NotebookPen,
   Crosshair,
   Sparkles,
@@ -16,11 +15,13 @@ import {
 import { SiteNavbar } from './site-navbar';
 import { SiteFooter } from './site-footer';
 import { ContactSection } from './contact-section';
+import { CommunitySection } from './community-section';
 import { CoursesSection, EbooksSection, LearningSectionLinks } from './learning-sections';
+import { ForexCoursesSection } from './forex-courses-section';
 import { LandingHero, primaryButton } from './landing-hero';
 import { MarketSessions } from '@/components/ui/market-sessions';
 import { FeaturesSection, displayHeading } from './landing-features';
-import { CountUp, Magnetic, useReveal, useSpotlight } from '@/components/effects/motion';
+import { CountUp, useReveal, useSpotlight } from '@/components/effects/motion';
 import { gradientText, home, sectionLabel } from '@/features/marketing/marketing-styles';
 import { cn } from '@/lib/cn';
 import type { AnalyticsSummary } from '@et-trader/shared';
@@ -28,14 +29,13 @@ import { API_URL } from '@/config/env';
 import { getSessionUser } from '@/features/auth/auth.api';
 
 const marketsTop = [
-  'Stocks',
-  'ETFs',
-  'Futures',
-  'Options',
-  'Crypto',
-  'Forex',
-  'Indices',
-  'Commodities',
+  'EURUSD',
+  'EURJPY',
+  'EURGBP',
+  'USDJPY',
+  'Gold',
+  'Silver',
+  'Bitcoin',
 ];
 const marketsBottom = [
   'Breakouts',
@@ -250,14 +250,15 @@ export function LandingPage() {
           <div className={learningIntro}>
             <span className={kicker}>TRADING VIDEO COURSES</span>
             <h2 className={learningHeading}>
-              Trading Courses <span className={gradientText}>from basic to pro</span>
+              Trading courses for <span className={gradientText}>binary and forex.</span>
             </h2>
             <p className={learningText}>
-              Two courses take you from trading foundations to advanced chart tools. Pay in USDT and
-              get lifetime access on Google Drive, delivered to your Gmail.
+              Learn Binary ET Strategies or build your skills from Basic to Advanced.
+              Our dedicated Forex Gold Masterclass is coming soon.
             </p>
           </div>
           <CoursesSection />
+          <ForexCoursesSection className="mt-14" />
           <LearningSectionLinks />
         </section>
 
@@ -407,7 +408,8 @@ export function LandingPage() {
               Trading e-books for <span className={gradientText}>your next setup.</span>
             </h2>
             <p className={learningText}>
-              Practical guides to price action, candlestick patterns, and gold trading strategy.
+              Coming soon: practical guides to price action, candlestick patterns, and gold trading
+              strategy.
             </p>
           </div>
           <EbooksSection />
@@ -426,13 +428,11 @@ export function LandingPage() {
               Three simple steps. A little more clarity every day.
             </p>
           </div>
-          <div className="relative grid grid-cols-3 gap-5 max-[860px]:grid-cols-[1fr]" data-reveal>
+          <div className="relative isolate grid grid-cols-3 items-stretch gap-6 max-[860px]:auto-rows-fr max-[860px]:grid-cols-1" data-reveal>
             <div
-              className="absolute top-[58px] right-[16%] left-[16%] h-[2px] overflow-hidden rounded-[2px] bg-[#ffffff0f] max-[860px]:hidden"
+              className="pointer-events-none absolute top-[57px] right-[calc(33.333%_-_56px)] left-[56px] z-[1] h-[2px] rounded-full bg-[linear-gradient(90deg,#8b5cf6,#a78bfa_55%,#22d3ee)] shadow-[0_0_12px_#8b5cf630] max-[860px]:top-[56px] max-[860px]:bottom-[calc((100%_-_48px)/3_-_56px)] max-[860px]:left-[56px] max-[860px]:h-auto max-[860px]:w-[2px] max-[860px]:bg-[linear-gradient(180deg,#8b5cf6,#a78bfa_55%,#22d3ee)]"
               aria-hidden="true"
-            >
-              <i className="block h-full origin-left bg-[linear-gradient(90deg,#8b5cf6,#22d3ee)] shadow-[0_0_16px_#8b5cf6] [transform:scaleX(0)] in-[.is-visible]:animate-[lp-grow-x_1.6s_0.3s_cubic-bezier(0.65,0,0.35,1)_forwards]" />
-            </div>
+            />
             {[
               {
                 icon: NotebookPen,
@@ -455,19 +455,19 @@ export function LandingPage() {
             ].map(({ icon: Icon, number, title, text }, i) => (
               <div
                 key={number}
-                className="spotlight relative rounded-[24px] border border-[#ffffff10] bg-[linear-gradient(180deg,#ffffff07,#ffffff02)] p-[30px] [transition:transform_0.4s,border-color_0.4s] hover:border-[#a78bfa33] hover:[transform:translateY(-4px)] max-[560px]:p-[22px]"
+                className="spotlight relative flex flex-col rounded-[20px] border border-[#ffffff12] bg-[linear-gradient(150deg,#14121e,#0c0d14_75%)] p-7 transition-colors duration-300 hover:border-[#a78bfa55] max-[860px]:grid max-[860px]:grid-cols-[56px_minmax(0,1fr)] max-[860px]:gap-x-5 max-[860px]:grid-rows-[auto_auto_1fr]"
                 style={{ '--i': i } as CSSProperties}
               >
-                <div className="flex items-center justify-between">
-                  <span className="relative z-[1] grid size-14 place-items-center rounded-[17px] border border-[#a78bfa44] bg-[#0b0b14] text-[#d8ccff] in-[.is-visible]:animate-[lp-light-up_0.6s_calc(0.4s_+_var(--i)_*_0.55s)_forwards]">
+                <div className="max-[860px]:row-span-3">
+                  <span className="relative z-[2] grid size-14 place-items-center rounded-[15px] border border-[#c4b5fd66] bg-[linear-gradient(145deg,#a374f4,#7c3aed_55%,#512497)] text-white shadow-[0_0_26px_#8b5cf640,inset_0_1px_0_#ffffff33]">
                     <Icon size={22} />
                   </span>
                 </div>
-                <b className="mt-[26px] block font-mono text-[10.5px] leading-[normal] font-semibold tracking-[0.16em] text-violet">
+                <b className="mt-6 block font-mono text-[12px] leading-[1.4] font-semibold tracking-[0.16em] text-[#b9a0ef] max-[860px]:mt-0">
                   STEP {number}
                 </b>
-                <h3 className="mt-2 font-display text-[24px] tracking-[-0.03em]">{title}</h3>
-                <p className="mt-[10px] text-[14.5px] leading-[1.7] text-[#9a97ae]">{text}</p>
+                <h3 className="mt-2 font-display text-[24px] leading-[1.25] font-semibold tracking-[-0.03em] text-[#f4f3f8]">{title}</h3>
+                <p className="mt-3 max-w-[32ch] text-[16px] leading-[1.65] text-[#a6a2b7]">{text}</p>
               </div>
             ))}
           </div>
@@ -475,40 +475,7 @@ export function LandingPage() {
 
         <ContactSection />
 
-        <section className="mx-auto max-w-[1240px] px-6 pt-10 pb-[120px]" data-reveal>
-          <div className="relative isolate flex animate-[rotate-angle_7s_linear_infinite] flex-col items-center overflow-hidden rounded-[34px] border border-transparent px-6 py-[100px] text-center [background:linear-gradient(#0a0a13,#0a0a13)_padding-box,conic-gradient(from_var(--angle),#ffffff10_0%,#ffffff10_55%,#8b5cf6_70%,#22d3ee_78%,#ffffff10_90%)_border-box] max-[860px]:px-5 max-[860px]:py-[70px]">
-            <div
-              className="absolute bottom-[-460px] left-[calc(50%_-_350px)] z-[-1] size-[700px] animate-[lp-breathe_5s_ease-in-out_infinite] rounded-full bg-[radial-gradient(circle,#8b5cf6_0%,#6d28d9_30%,transparent_68%)] opacity-75 blur-[40px]"
-              aria-hidden="true"
-            />
-            <div
-              className="absolute inset-0 z-[-1] bg-[size:44px_44px] [background-image:linear-gradient(#ffffff07_1px,transparent_1px),linear-gradient(90deg,#ffffff07_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_50%_100%,#000,transparent_70%)]"
-              aria-hidden="true"
-            />
-            <span className="mb-[26px] grid size-16 animate-[lp-float_5s_ease-in-out_infinite] place-items-center rounded-[20px] bg-[linear-gradient(135deg,#8b5cf6,#22d3ee)] text-white shadow-[0_0_60px_#8b5cf6aa]">
-              <TrendingUp size={26} />
-            </span>
-            <span className={kicker}>YOUR NEXT CHAPTER STARTS HERE</span>
-            <h2 className={cn(displayHeading, 'text-[length:clamp(38px,6vw,76px)]')}>
-              Every trade is a lesson.
-              <br />
-              <span className={gradientText}>Make yours count.</span>
-            </h2>
-            <p className="mt-5 mb-10 text-[18px] text-[#b4b1c6]">
-              Build a journal. Understand your process. Find your edge.
-            </p>
-            <Magnetic>
-              <Link href="/signup" className={primaryButton}>
-                <span>Create your trading journal</span>
-                <ArrowUpRight size={18} />
-              </Link>
-            </Magnetic>
-            <small className="mt-6 inline-flex items-center gap-[7px] text-[12.5px] text-[#8f8ca5]">
-              <ShieldCheck size={13} />
-              Your trades. Your insights. Your space.
-            </small>
-          </div>
-        </section>
+        <CommunitySection />
       </main>
       <SiteFooter />
     </div>

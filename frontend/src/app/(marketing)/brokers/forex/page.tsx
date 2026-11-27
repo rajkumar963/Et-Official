@@ -5,7 +5,7 @@ import { forexPage } from '@/features/brokers/data';
 export const metadata: Metadata = {
   title: 'Forex Trading — Open an Account',
   description:
-    'Open a forex trading account with a regulated broker, then log every position in your ET Official journal. Includes important updates and information before you start.',
+    'Compare XM and Alpari account options, open their registration links, and log your positions in ET Official. Includes trading updates and account information.',
   alternates: { canonical: '/brokers/forex' },
 };
 

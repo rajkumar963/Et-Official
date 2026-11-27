@@ -15,6 +15,7 @@ import { ordersRouter } from './modules/orders/orders.routes';
 import { coursesRouter } from './modules/courses/courses.routes';
 import { withdrawalsRouter } from './modules/withdrawals/withdrawals.routes';
 import { adminRouter } from './modules/admin/admin.routes';
+import { contactRouter } from './modules/contact/contact.routes';
 export const app = express();
 app.disable('x-powered-by');
 // Behind proxies, use X-Forwarded-For so rate limits apply per visitor, not per proxy.
@@ -34,6 +35,7 @@ app.get('/api/v1/health', (_req, res) => {
   });
 });
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/contact', contactRouter);
 app.use('/api/v1/trades', requireAuth, tradesRouter);
 app.use('/api/v1/analytics', requireAuth, analyticsRouter);
 app.use('/api/v1/users', requireAuth, usersRouter);

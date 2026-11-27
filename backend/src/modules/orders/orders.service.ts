@@ -110,19 +110,31 @@ const activeStatuses = ['awaiting_payment', 'submitted', 'approved'];
 export async function checkoutConfig(userId: string, productId: string): Promise<CheckoutConfig> {
   const product = getProduct(productId);
   if (!product) throw new HttpError(404, 'This product does not exist.');
+  if (product.comingSoon)
+    throw new HttpError(409, 'This e-book is coming soon. Orders are not open yet.');
   let existing = await Order.findOne({
     userId,
     productId,
     status: { $in: activeStatuses },
   }).sort({ createdAt: -1 });
-  // Keep an unpaid order aligned with the currently configured wallet. This also
-  // repairs orders created before a receiving address was corrected.
+  // Refresh unpaid quotes when catalogue prices or receiving wallets change.
+  // Submitted payments and approved purchases retain their original amounts.
   if (existing?.status === 'awaiting_payment') {
     const currentAddress = walletAddress(existing.network);
+    let changed = false;
+    if (existing.amount !== product.price) {
+      existing.amount = product.price;
+      changed = true;
+    }
+    if (existing.productTitle !== product.title) {
+      existing.productTitle = product.title;
+      changed = true;
+    }
     if (currentAddress && existing.walletAddress !== currentAddress) {
       existing.walletAddress = currentAddress;
-      existing = await existing.save();
+      changed = true;
     }
+    if (changed) existing = await existing.save();
   }
   return {
     product,
@@ -137,6 +149,8 @@ export async function checkoutConfig(userId: string, productId: string): Promise
  */
 export async function createOrder(userId: string, input: CreateOrderInput) {
   const product = getProduct(input.productId)!;
+  if (product.comingSoon)
+    throw new HttpError(409, 'This e-book is coming soon. Orders are not open yet.');
   const address = walletAddress(input.network);
   if (!address) throw new HttpError(400, `${input.network} payments are not available right now.`);
 
@@ -153,6 +167,7 @@ export async function createOrder(userId: string, input: CreateOrderInput) {
         : 'You already submitted a payment for this. It is being reviewed.',
     );
   const details = {
+    productTitle: product.title,
     network: input.network,
     walletAddress: address,
     amount: product.price,

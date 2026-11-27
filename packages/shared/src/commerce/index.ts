@@ -11,19 +11,21 @@ export interface Product {
   type: ProductType;
   title: string;
   price: number;
+  comingSoon?: boolean;
 }
 
 export const products: Product[] = [
-  { id: 'basic-to-advanced-course', type: 'course', title: 'Basic to Advanced Trading Course', price: 199 },
-  { id: 'advanced-to-pro-course', type: 'course', title: 'Advanced to Pro Trading Course', price: 319 },
-  { id: 'price-action-patterns', type: 'ebook', title: 'Price Action Patterns 2.0', price: 30 },
+  { id: 'basic-to-advanced-course', type: 'course', title: 'Binary ET Strategies', price: 250 },
+  { id: 'advanced-to-pro-course', type: 'course', title: 'Basic to Advanced Binary Trading', price: 450 },
+  { id: 'price-action-patterns', type: 'ebook', title: 'Price Action Patterns 2.0', price: 30, comingSoon: true },
   {
     id: 'candlestick-chart-patterns-hindi',
     type: 'ebook',
     title: 'Technical Candlestick & Chart Pattern E-Book',
     price: 30,
+    comingSoon: true,
   },
-  { id: 'gold-strategy-book', type: 'ebook', title: 'Gold Strategy Book', price: 175 },
+  { id: 'gold-strategy-book', type: 'ebook', title: 'Gold Strategy Book', price: 175, comingSoon: true },
 ];
 
 export function getProduct(id: string) {
