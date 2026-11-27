@@ -208,7 +208,7 @@ export function FeaturesSection() {
                 N
               </span>
               <div>
-                <strong className="font-mono">NVDA</strong>
+                <strong className="font-mono">EURUSD</strong>
                 <small className="block text-[11px] text-[#77748c]">Morning breakout</small>
               </div>
               <span className="ml-auto rounded-full border border-[#4ade8035] bg-[#4ade8018] px-[9px] py-1 font-mono text-[10px] leading-[normal] font-semibold text-gain">
@@ -281,7 +281,7 @@ export function FeaturesSection() {
             className={cn(inset, 'mt-auto flex flex-wrap gap-[10px] p-[18px]')}
             aria-hidden="true"
           >
-            {['Long', 'Breakout', 'Wins only', 'NVDA', 'This month', 'A+ setups'].map((chip, i) => (
+            {['Long', 'Breakout', 'Wins only', 'EURUSD', 'This month', 'A+ setups'].map((chip, i) => (
               <span
                 key={chip}
                 className="animate-[lp-chip-cycle_7.2s_calc(var(--i)_*_1.2s)_infinite] rounded-full border border-[#ffffff14] bg-[#ffffff06] px-[15px] py-[9px] text-[13px] text-[#b9b6cb]"

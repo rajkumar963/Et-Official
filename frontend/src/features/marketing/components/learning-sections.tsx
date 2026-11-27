@@ -13,6 +13,7 @@ import { courseDetailsHref, enrollHref } from '../enroll';
 import { CourseArtwork } from './course-artwork';
 import { ebooks } from '../data/ebooks';
 import { EbookArtwork } from './ebook-artwork';
+import { CourseStartDate } from './course-info';
 
 /** Centered intro (kicker, big title, lead) above the course/e-book grids (previously .learningIntro). */
 export const learningIntro =
@@ -76,6 +77,7 @@ export function CoursesSection({
             <p className="mt-[5px] min-h-[45px] text-[14px] leading-[1.6] text-[#9ab3d5]">
               {course.description}
             </p>
+            <CourseStartDate date={course.startDate} />
             <ul className="mt-3 grid list-none grid-cols-2 gap-x-[10px] gap-y-2 border-y border-[#ffffff10] py-3">
               <li className={masterclassFeature}>
                 <MonitorPlay size={13} />

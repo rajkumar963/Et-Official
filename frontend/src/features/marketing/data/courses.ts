@@ -16,6 +16,7 @@ export interface Course {
   level: string;
   title: string;
   description: string;
+  startDate: string;
   direction: CourseDirection;
   artworkTitle: string;
   price: number;
@@ -43,6 +44,7 @@ export const courses: Course[] = [
     number: '01',
     level: 'ET STRATEGIES',
     title: 'Binary ET Strategies',
+    startDate: '2026-12-05',
     description: 'ET live and OTC market strategies, money management, and trading psychology.',
     direction: 'BASIC',
     artworkTitle: 'BINARY MARKET',
@@ -131,6 +133,7 @@ export const courses: Course[] = [
     number: '02',
     level: 'BASIC TO ADVANCED',
     title: 'Basic to Advanced Binary Trading',
+    startDate: '2026-12-05',
     description:
       'A complete learning path from chart basics to advanced tools and market analysis.',
     direction: 'ADVANCED',

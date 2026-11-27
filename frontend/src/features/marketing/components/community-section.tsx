@@ -1,4 +1,5 @@
-import { Send } from 'lucide-react';
+import Link from 'next/link';
+import { Binary, LineChart, Send } from 'lucide-react';
 import { contactChannels } from '@/config/site';
 
 export function CommunitySection() {
@@ -46,6 +47,49 @@ export function CommunitySection() {
             <p className="mt-3 text-[13px] leading-relaxed text-[#89819c]">
               A clearer process starts with a conversation.
             </p>
+            <div className="mt-6 max-w-[520px] border-t border-[#ffffff0c] pt-5">
+              <p className="mb-3 text-[13px] font-medium text-[#c2b8d6]">
+                Open your trading account
+              </p>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+                {[
+                  {
+                    href: '/brokers/binary',
+                    title: 'Binary Trading',
+                    label: 'Create a binary trading account',
+                    icon: Binary,
+                  },
+                  {
+                    href: '/brokers/forex',
+                    title: 'Forex Trading',
+                    label: 'Create a forex trading account',
+                    icon: LineChart,
+                  },
+                ].map(({ href, title, label, icon: Icon }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    aria-label={label}
+                    className="group flex min-h-[76px] min-w-0 items-center gap-3 rounded-xl border border-[#a78bfa2b] bg-[#a78bfa08] p-3 transition-colors hover:border-[#a78bfa66] hover:bg-[#a78bfa14] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-300"
+                  >
+                    <span
+                      className="grid size-10 shrink-0 place-items-center rounded-[10px] border border-[#a78bfa33] bg-[#a78bfa0d] text-[#c4b5fd]"
+                      aria-hidden="true"
+                    >
+                      <Icon size={18} strokeWidth={1.7} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[14px] leading-[1.4] font-semibold text-[#eee7fa]">
+                        {title}
+                      </span>
+                      <span className="mt-1 block text-[12px] leading-[1.5] text-[#a199b4]">
+                        Account setup &amp; updates
+                      </span>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
           <div
             className="relative flex min-h-[300px] flex-col items-center justify-center text-center max-[767px]:hidden"

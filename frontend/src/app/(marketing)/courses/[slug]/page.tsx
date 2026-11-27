@@ -47,6 +47,7 @@ export default async function CoursePage({ params }: Props) {
     hasCourseInstance: {
       '@type': 'CourseInstance',
       courseMode: 'online',
+      startDate: course.startDate,
       courseWorkload: 'PT10H',
       inLanguage: ['en', 'hi'],
     },

@@ -2,11 +2,21 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
-import { ArrowUpRight, ArrowRight, Check, ChevronRight, Sparkles, Flame, Zap } from 'lucide-react';
+import {
+  ArrowUpRight,
+  ArrowRight,
+  Check,
+  ChevronRight,
+  Sparkles,
+  Flame,
+  Zap,
+  Send,
+} from 'lucide-react';
 import { DashboardPreview } from './dashboard-preview';
 import { MarketCanvas } from '@/components/effects/market-canvas';
 import { Magnetic, prefersReducedMotion } from '@/components/effects/motion';
 import { cn } from '@/lib/cn';
+import { contactChannels } from '@/config/site';
 
 const rotatingWords = ['edge.', 'discipline.', 'process.', 'patterns.'];
 
@@ -165,13 +175,16 @@ export function LandingHero() {
             'animate-[lp-rise-in_1s_0.4s_var(--ease-smooth)_both]',
           )}
         >
-          Good traders track results. Great traders understand them. ET Official turns every execution
-          into a living picture of your edge — calendar, analytics and behavior, in one beautiful
-          workspace.
+          <span className="block font-display text-[24px] leading-[1.4] font-medium tracking-[-0.025em] text-[#eee8fa] max-[560px]:text-[21px]">
+            Welcome to the ET community.
+          </span>
+          <span className="mt-2 block">
+            Learn together, share perspectives, and build a clearer trading process.
+          </span>
         </p>
         <div
           className={cn(
-            'mt-10 flex items-center justify-center gap-[14px] max-[560px]:flex-col max-[560px]:items-stretch max-[560px]:[&_.magnetic]:w-full max-[560px]:[&_.magnetic]:justify-center',
+            'mt-10 flex flex-wrap items-center justify-center gap-[14px] max-[560px]:flex-col max-[560px]:items-stretch max-[560px]:[&_.magnetic]:w-full max-[560px]:[&_.magnetic]:justify-center',
             'animate-[lp-rise-in_1s_0.55s_var(--ease-smooth)_both]',
           )}
         >
@@ -189,6 +202,15 @@ export function LandingHero() {
             className="inline-flex items-center gap-[9px] rounded-[14px] border border-[#ffffff17] bg-[#ffffff08] px-[22px] py-4 text-[15px] font-medium text-[#e4e1f0] backdrop-blur-[10px] hover:border-[#ffffff30] hover:bg-[#ffffff10] max-[560px]:w-full max-[560px]:justify-center [&_svg]:[transition:transform_0.25s] hover:[&_svg]:[transform:translateX(3px)]"
           >
             Explore the dashboard <ArrowRight size={17} />
+          </a>
+          <a
+            href={contactChannels.telegramCommunity.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Join the ET community on Telegram (opens in a new tab)"
+            className="inline-flex min-h-[56px] items-center justify-center gap-2.5 rounded-[14px] border border-[#5ac7eb4d] bg-[linear-gradient(120deg,#1d83b022,#209edb0d)] px-[22px] py-4 text-[15px] font-semibold text-[#a8e3fa] shadow-[inset_0_1px_0_#b5ecff0a] transition-[background-color,border-color,color] hover:border-[#6ed7f588] hover:bg-[#259edb20] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan max-[560px]:w-full"
+          >
+            <Send size={18} strokeWidth={1.7} aria-hidden="true" /> Join our Telegram
           </a>
         </div>
         <div

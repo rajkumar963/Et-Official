@@ -1,7 +1,7 @@
 /** Broker identities and account links for the Account and Update pages. */
 
 export type Broker = {
-  id: 'quotex' | 'binolla' | 'xm' | 'alpari';
+  id: 'quotex' | 'binolla' | 'xm' | 'elefin';
   name: string;
   logo?: string;
   domain: string;
@@ -132,7 +132,7 @@ export const forexPage: BrokerPageData = {
   title: 'Compare forex brokers.',
   titleAccent: 'Find your platform.',
   intro:
-    'Compare XM and Alpari, review their account terms, then open the broker’s registration page. Log your positions in ET Official to keep track of your trading process.',
+    'Compare XM, and Elefin, review their account terms, then open the broker’s registration page. Log your positions in ET Official to keep track of your trading process.',
   brokers: [
     {
       id: 'xm',
@@ -148,17 +148,21 @@ export const forexPage: BrokerPageData = {
       affiliateUrl: 'https://affs.click/iX8vA',
     },
     {
-      id: 'alpari',
-      name: 'Alpari Forex Broker',
-      logo: '/brokers/alpari.svg',
-      domain: 'alpari.com',
-      linkType: 'official',
-      tagline: 'Forex and CFD account options',
+      id: 'elefin',
+      name: 'Elefin Forex Broker',
+      domain: 'elefin.com',
+      linkType: 'partner',
+      tagline: 'Open an account through ETTRADER',
       description:
-        'Compare Alpari’s account types and trading platforms, then register directly on Alpari’s account page. Available options depend on your region.',
-      highlights: ['Forex & CFDs', 'Demo accounts', 'Trading platforms', 'Official registration'],
+        'Register with Elefin through the ETTRADER partner link. Review the available account options and broker terms before funding your account.',
+      highlights: [
+        'ETTRADER partner link',
+        'Online registration',
+        'Account options',
+        'Client portal',
+      ],
       minDeposit: 'See broker terms',
-      affiliateUrl: 'https://trade.alpari.com/signup',
+      affiliateUrl: 'https://partners.elefin.com/go/ETTRADER',
     },
   ],
   steps: openAccountSteps,

@@ -27,7 +27,7 @@ export function ContactSection() {
         </div>
         <Link
           href="/contact"
-          className="inline-flex min-h-12 min-w-[136px] items-center justify-center gap-2 rounded-[11px] border border-[#ffffff24] bg-[linear-gradient(110deg,#836234,#785569_40%,#168aa6_80%,#20b9d6)] px-5 py-3 text-[14px] font-semibold whitespace-nowrap text-white shadow-[0_4px_22px_#22d3ee20] transition-[filter,box-shadow] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan max-[820px]:col-start-2 max-[820px]:justify-self-start max-[560px]:col-span-2 max-[560px]:w-full"
+          className="inline-flex min-h-12 min-w-[136px] items-center justify-center gap-2 rounded-[11px] border border-[#a78bfa66] bg-[linear-gradient(110deg,#6d28d9,#8b5cf6)] px-5 py-3 text-[14px] font-semibold whitespace-nowrap text-white shadow-[0_8px_24px_#8b5cf633] transition-[filter,box-shadow] hover:brightness-110 hover:shadow-[0_10px_30px_#8b5cf64d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-2 max-[820px]:col-start-2 max-[820px]:justify-self-start max-[560px]:col-span-2 max-[560px]:w-full"
         >
           Contact us <ArrowUpRight size={17} />
         </Link>

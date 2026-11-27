@@ -9,6 +9,7 @@ import {
   CourseDisclaimer,
   CourseFaq,
   CourseIncludes,
+  CourseStartDate,
   EnrollmentSteps,
   courseCard,
   courseSectionTitle,
@@ -112,6 +113,7 @@ export function CourseDetails({ course }: { course: Course }) {
           <p className="mt-4 max-w-[620px] text-[17px] leading-[1.65] text-[#b3b0c6]">
             {course.tagline}
           </p>
+          <CourseStartDate date={course.startDate} />
           <ul className="mt-6 flex list-none flex-wrap gap-2">
             {course.topics.map((topic) => (
               <li

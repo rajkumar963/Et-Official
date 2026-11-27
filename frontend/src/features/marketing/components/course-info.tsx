@@ -1,4 +1,5 @@
 import {
+  CalendarDays,
   ChevronDown,
   FolderOpen,
   Infinity as InfinityIcon,
@@ -18,6 +19,26 @@ export const courseSectionTitle =
   'font-display text-[length:clamp(22px,2.4vw,28px)] leading-[1.2] tracking-[-0.03em] text-white';
 
 const includeIcons = [MonitorPlay, InfinityIcon, Languages, FolderOpen];
+
+export function CourseStartDate({ date }: { date: string }) {
+  const label = new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(`${date}T00:00:00Z`));
+  return (
+    <p className="mt-3 inline-flex items-center gap-2 rounded-lg border border-[#a78bfa33] bg-[#8b5cf60c] px-3 py-2 text-[13px] leading-[1.5] text-[#c4b5e4]">
+      <CalendarDays size={16} className="shrink-0 text-violet-2" aria-hidden="true" />
+      <span>
+        Course starts on{' '}
+        <time dateTime={date} className="font-semibold text-[#e4d8fb]">
+          {label}
+        </time>
+      </span>
+    </p>
+  );
+}
 
 /** "Every course includes" list with icons. */
 export function CourseIncludes({

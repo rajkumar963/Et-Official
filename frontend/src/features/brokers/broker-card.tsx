@@ -7,7 +7,7 @@ const logoBackground: Record<Broker['id'], string> = {
   quotex: 'border-[#4b9dff33] bg-[#152540] text-[#90c0ff]',
   binolla: 'border-[#426efb33] bg-[#090a11]',
   xm: 'border-[#ffffff44] bg-[#f5f5f8]',
-  alpari: 'border-[#bb976533] bg-[linear-gradient(135deg,#3a2b1e,#17151b)]',
+  elefin: 'border-[#a78bfa33] bg-[#221b35] text-[#c4b5fd]',
 };
 
 export function BrokerCard({ broker }: { broker: Broker }) {
@@ -39,9 +39,9 @@ export function BrokerCard({ broker }: { broker: Broker }) {
           ) : (
             <span
               className="font-display text-[24px] font-bold tracking-[-0.07em]"
-              aria-label="Quotex"
+              aria-label={broker.name}
             >
-              Qx
+              {broker.id === 'quotex' ? 'Qx' : 'E'}
             </span>
           )}
         </span>
