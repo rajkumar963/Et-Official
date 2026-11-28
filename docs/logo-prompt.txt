@@ -1,0 +1,6 @@
+Mode: built-in image_gen edit
+Reference: photo_2026-11-28_03-29-02.jpg (user supplied)
+Saved asset: frontend/public/brand-logo-violet-cyan.png
+
+Final prompt:
+Use case: identity-preserve. Asset type: square portrait brand logo for the ET Official dark trading website. Input image 1 is the edit target. Recolor this exact logo to coordinate with the website: near-black #06060b and deep charcoal #11111b backgrounds, electric violet #8b5cf6, soft lavender #a78bfa, cyan #22d3ee. Replace all neon green and red in the circular ring, candlesticks, diagonal accents and rim lighting with a refined cyan-to-violet combination: cyan on the left, violet on the right, with balanced soft glows. Subdue the yellow room lighting into cool violet. Preserve the same man's identity, facial features, natural skin tones, hair, black sunglasses, seated hand-under-chin pose, black jacket and white shirt. Preserve the composition, laptop, candlestick shapes and circular framing. Keep the face crisp and prominent, with clean luminous ring edges that remain recognizable at small avatar sizes. Premium, restrained glow, deep dark background. Square image, complete circular ring inside the canvas with a little dark padding. No words, letters, watermarks or extra symbols.

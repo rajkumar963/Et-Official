@@ -9,7 +9,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { courses } from '../data/courses';
-import { courseDetailsHref, enrollHref } from '../enroll';
+import { courseDetailsHref } from '../enroll';
+import { CourseOffer } from './course-offer';
 import { CourseArtwork } from './course-artwork';
 import { ebooks } from '../data/ebooks';
 import { EbookArtwork } from './ebook-artwork';
@@ -19,10 +20,6 @@ import { CourseStartDate } from './course-info';
 export const learningIntro =
   'mx-auto mb-[42px] max-w-[760px] text-center [&_:is(h1,h2)]:mt-[18px] [&_:is(h1,h2)]:font-display [&_:is(h1,h2)]:text-[length:clamp(34px,5vw,56px)] [&_:is(h1,h2)]:leading-[1.08] [&_:is(h1,h2)]:tracking-[-0.045em] [&_p]:mx-auto [&_p]:mt-[18px] [&_p]:max-w-[590px] [&_p]:text-[16px] [&_p]:leading-[1.7] [&_p]:text-[#a09db4]';
 
-const buyButton =
-  'flex min-h-[48px] w-full items-center gap-[7px] rounded-[9px] border-0 bg-[linear-gradient(100deg,#6d28d9,#8b5cf6)] py-1.5 pr-[7px] pl-[13px] text-[14px] font-extrabold text-white shadow-[0_7px_20px_#8b5cf640]';
-const buyButtonPrice =
-  'ml-auto rounded-[7px] bg-[#4c1d95] px-[10px] py-[7px] font-mono text-[12px] leading-[normal] font-extrabold';
 const checkoutNote = 'col-span-full m-0 text-center text-[12px] text-[#777f91]';
 const bullet =
   "relative before:absolute before:left-0 before:size-[5px] before:rounded-full before:bg-violet before:content-['']";
@@ -113,16 +110,7 @@ export function CoursesSection({
                   {course.oldPrice - course.price} USDT
                 </p>
               )}
-              <Link
-                href={enrollHref(course)}
-                className={cn(
-                  buyButton,
-                  'relative z-[1] transition-[filter,translate] hover:-translate-y-px hover:brightness-110',
-                )}
-              >
-                Enroll now <ArrowRight size={15} />
-                <span className={buyButtonPrice}>{course.price} USDT</span>
-              </Link>
+              <CourseOffer productId={course.id} />
               <Link
                 className="relative z-[1] mt-[10px] flex items-center justify-center gap-[7px] text-[13px] font-bold text-[#e1e5ec] hover:text-violet-3"
                 href={courseDetailsHref(course)}

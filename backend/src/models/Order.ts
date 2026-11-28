@@ -11,6 +11,9 @@ const schema = new Schema(
     productTitle: { type: String, required: true },
     /** Price charged in USDT, copied from the catalog when the order was created. */
     amount: { type: Number, required: true },
+    originalAmount: { type: Number, default: null },
+    discountAmount: { type: Number, default: 0 },
+    couponCode: { type: String, default: null },
     currency: { type: String, default: 'USDT' },
     network: { type: String, enum: paymentNetworks, required: true },
     walletAddress: { type: String, required: true },

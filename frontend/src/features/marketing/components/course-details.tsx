@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, Check, ChevronDown, MessageCircle } from 'lucide
 import { cn } from '@/lib/cn';
 import { sectionLabel } from '../marketing-styles';
 import type { Course } from '../data/courses';
-import { enrollHref } from '../enroll';
+import { CourseOffer } from './course-offer';
 import { CourseArtwork } from './course-artwork';
 import {
   CourseDisclaimer,
@@ -15,9 +15,6 @@ import {
   courseSectionTitle,
 } from './course-info';
 import { CoursesSection } from './learning-sections';
-
-const enrollButton =
-  'flex min-h-[50px] w-full items-center gap-2 rounded-[11px] bg-[linear-gradient(100deg,#6d28d9,#8b5cf6)] py-1.5 pr-2 pl-4 text-[14px] font-extrabold text-white shadow-[0_10px_30px_#8b5cf645] transition-[filter,translate] hover:-translate-y-px hover:brightness-110';
 
 function Section({
   id,
@@ -50,25 +47,7 @@ function PurchaseCard({ course }: { course: Course }) {
     >
       <CourseArtwork course={course} variant="purchase" />
       <div className="p-6 max-[560px]:p-5">
-        <div className="flex items-baseline gap-3">
-          <strong className="font-mono text-[34px] leading-none font-extrabold tracking-[-0.03em] text-white">
-            {course.price}
-            <span className="ml-1.5 text-[14px] font-bold text-violet-3">USDT</span>
-          </strong>
-          {course.oldPrice && (
-            <span className="text-[13px] text-[#7990af]">
-              <s className="text-[#69748a]">{course.oldPrice} USDT</s> · save{' '}
-              {course.oldPrice - course.price} USDT
-            </span>
-          )}
-        </div>
-        <p className="mt-2 text-[12px] text-[#8f8ca5]">One-time payment · lifetime access</p>
-        <Link href={enrollHref(course)} className={cn(enrollButton, 'mt-5')}>
-          Enroll now <ArrowRight size={16} />
-          <span className="ml-auto rounded-[8px] bg-[#4c1d95] px-3 py-2 font-mono text-[11px] font-extrabold">
-            {course.price} USDT
-          </span>
-        </Link>
+        <CourseOffer productId={course.id} variant="purchase" />
         <Link
           href="/contact?topic=courses"
           className="mt-3 flex items-center justify-center gap-2 text-[12px] font-semibold text-[#d4c8ff] hover:text-white"

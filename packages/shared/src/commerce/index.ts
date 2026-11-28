@@ -39,6 +39,24 @@ export function productPrice(id: string) {
   return product.price;
 }
 
+export const courseCouponCode = 'ET10';
+
+/** Calculate from the catalogue price; clients never supply a payable amount. */
+export function productQuote(product: Product, code = '') {
+  const couponCode = code.trim().toUpperCase();
+  if (couponCode && (product.type !== 'course' || product.comingSoon))
+    throw new Error('Coupons are available only for courses open for enrollment.');
+  if (couponCode && couponCode !== courseCouponCode)
+    throw new Error('Invalid coupon code. Enter ET10 for 10% off.');
+  const discountAmount = couponCode ? Math.round(product.price * 10) / 100 : 0;
+  return {
+    originalAmount: product.price,
+    couponCode: couponCode || null,
+    discountAmount,
+    amount: Math.round((product.price - discountAmount) * 100) / 100,
+  };
+}
+
 /* ───────────────────────── Payment networks ───────────────────────── */
 
 export const paymentNetworks = ['TRC20', 'BEP20', 'ERC20'] as const;
@@ -122,8 +140,18 @@ export const createOrderSchema = z
       ),
     whatsapp: z.string().trim().max(30).optional().default(''),
     telegram: z.string().trim().max(40).optional().default(''),
+    couponCode: z.string().trim().toUpperCase().max(32).optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((input, ctx) => {
+    const product = getProduct(input.productId);
+    if (!product) return;
+    try {
+      productQuote(product, input.couponCode);
+    } catch (error) {
+      ctx.addIssue({ code: 'custom', path: ['couponCode'], message: (error as Error).message });
+    }
+  });
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
 
 export const submitPaymentSchema = z
@@ -153,6 +181,9 @@ export interface OrderDto {
   productType: ProductType;
   productTitle: string;
   amount: number;
+  originalAmount: number;
+  discountAmount: number;
+  couponCode: string | null;
   currency: 'USDT';
   network: PaymentNetwork;
   walletAddress: string;

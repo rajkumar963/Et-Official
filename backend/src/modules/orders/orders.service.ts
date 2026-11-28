@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import {
   getProduct,
+  productQuote,
   networkInfo,
   paymentNetworks,
   type AdminOrderDto,
@@ -59,6 +60,9 @@ export function toOrderDto(order: OrderDoc, access?: { url: string; note: string
     productType: order.productType as OrderDto['productType'],
     productTitle: order.productTitle,
     amount: order.amount,
+    originalAmount: order.originalAmount ?? order.amount + (order.discountAmount ?? 0),
+    discountAmount: order.discountAmount ?? 0,
+    couponCode: order.couponCode ?? null,
     currency: 'USDT',
     network: order.network as PaymentNetwork,
     walletAddress: order.walletAddress,
@@ -120,10 +124,16 @@ export async function checkoutConfig(userId: string, productId: string): Promise
   // Refresh unpaid quotes when catalogue prices or receiving wallets change.
   // Submitted payments and approved purchases retain their original amounts.
   if (existing?.status === 'awaiting_payment') {
+    const quote = productQuote(product, existing.couponCode ?? '');
     const currentAddress = walletAddress(existing.network);
     let changed = false;
-    if (existing.amount !== product.price) {
-      existing.amount = product.price;
+    if (
+      existing.amount !== quote.amount ||
+      existing.originalAmount !== quote.originalAmount ||
+      existing.discountAmount !== quote.discountAmount ||
+      existing.couponCode !== quote.couponCode
+    ) {
+      existing.set(quote);
       changed = true;
     }
     if (existing.productTitle !== product.title) {
@@ -151,6 +161,12 @@ export async function createOrder(userId: string, input: CreateOrderInput) {
   const product = getProduct(input.productId)!;
   if (product.comingSoon)
     throw new HttpError(409, 'This e-book is coming soon. Orders are not open yet.');
+  let quote;
+  try {
+    quote = productQuote(product, input.couponCode);
+  } catch (error) {
+    throw new HttpError(400, (error as Error).message);
+  }
   const address = walletAddress(input.network);
   if (!address) throw new HttpError(400, `${input.network} payments are not available right now.`);
 
@@ -170,7 +186,7 @@ export async function createOrder(userId: string, input: CreateOrderInput) {
     productTitle: product.title,
     network: input.network,
     walletAddress: address,
-    amount: product.price,
+    ...quote,
     buyerName: input.buyerName,
     accessEmail: input.accessEmail,
     whatsapp: input.whatsapp,

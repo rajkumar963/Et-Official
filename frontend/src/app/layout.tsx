@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   creator: site.name,
   publisher: site.name,
   icons: {
-    icon: '/brand-logo.jpg',
-    apple: '/brand-logo.jpg',
+    icon: '/brand-logo-violet-cyan.png',
+    apple: '/brand-logo-violet-cyan.png',
   },
   // NOTE: no `alternates.canonical` here on purpose. Next.js inherits layout metadata into
   // every child page, so a canonical set here would make each page declare the homepage as its
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     description: site.description,
     url: site.url,
     locale: 'en_US',
-    images: ['/brand-logo.jpg'],
+    images: ['/brand-logo-violet-cyan.png'],
   },
   twitter: {
     card: 'summary_large_image',
@@ -63,7 +63,7 @@ const structuredData = {
       '@id': `${site.url}/#organization`,
       name: site.name,
       url: site.url,
-      logo: `${site.url}/brand-logo.jpg`,
+      logo: `${site.url}/brand-logo-violet-cyan.png`,
       description: site.description,
       sameAs: [
         contactChannels.youtube.href,

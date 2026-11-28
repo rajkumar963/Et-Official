@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createOrderSchema } from '@et-trader/shared';
+import { createOrderSchema, getProduct, productQuote, paymentQrValue } from '@et-trader/shared';
 
 process.env.JWT_ACCESS_SECRET = 'test-only-secret-at-least-thirty-two-characters';
 process.env.NODE_ENV = 'test';
@@ -92,5 +92,129 @@ test('the upcoming Gold Masterclass is not offered as a purchasable product', ()
   assert.equal(
     createOrderSchema.safeParse({ ...buyer, productId: 'forex-gold-masterclass' }).success,
     false,
+  );
+});
+
+test('ET10 discounts each course by 10% of its actual catalogue price', () => {
+  for (const [id, price, discount, total] of [
+    ['basic-to-advanced-course', 250, 25, 225],
+    ['advanced-to-pro-course', 450, 45, 405],
+  ] as const) {
+    const product = getProduct(id)!;
+    assert.deepEqual(productQuote(product, ' et10 '), {
+      originalAmount: price,
+      discountAmount: discount,
+      couponCode: 'ET10',
+      amount: total,
+    });
+    assert.equal(productQuote(product).amount, price);
+  }
+  assert(paymentQrValue('ERC20', '0xWallet', 225).endsWith('uint256=225000000'));
+});
+
+test('coupon validation rejects unknown codes, e-books and browser-supplied prices', () => {
+  const valid = { ...buyer, productId: 'basic-to-advanced-course', couponCode: ' et10 ' };
+  assert.equal(createOrderSchema.parse(valid).couponCode, 'ET10');
+  for (const input of [
+    { ...valid, couponCode: 'FREE100' },
+    { ...valid, productId: 'price-action-patterns' },
+    { ...valid, amount: 1 },
+    { ...valid, discountAmount: 249 },
+  ])
+    assert.equal(createOrderSchema.safeParse(input).success, false);
+});
+
+test('server applies and removes ET10 on unpaid orders and preserves it on checkout reload', async (t) => {
+  const { createOrder, checkoutConfig } = await import('../../src/modules/orders/orders.service');
+  const { Order } = await import('../../src/models/Order');
+  for (const [id, originalAmount, amount] of [
+    ['basic-to-advanced-course', 250, 225],
+    ['advanced-to-pro-course', 450, 405],
+  ] as const) {
+    const order = await oldOrder(id);
+    t.mock.method(order, 'save', async () => order);
+    const lookup = t.mock.method(Order, 'findOne', async () => order);
+    const discounted = await createOrder('000000000000000000000001', {
+      ...buyer,
+      productId: id,
+      couponCode: 'ET10',
+    });
+    assert.equal(discounted.amount, amount);
+    assert.equal(discounted.originalAmount, originalAmount);
+    assert.equal(discounted.couponCode, 'ET10');
+    assert.equal(discounted.discountAmount, originalAmount - amount);
+    lookup.mock.restore();
+    const reload = t.mock.method(Order, 'findOne', () => ({ sort: async () => order }) as never);
+    const config = await checkoutConfig('000000000000000000000001', id);
+    assert.equal(config.existingOrder?.amount, amount);
+    assert.equal(config.existingOrder?.couponCode, 'ET10');
+    reload.mock.restore();
+    const update = t.mock.method(Order, 'findOne', async () => order);
+    const fullPrice = await createOrder('000000000000000000000001', {
+      ...buyer,
+      productId: id,
+      couponCode: '',
+    });
+    assert.equal(fullPrice.amount, originalAmount);
+    assert.equal(fullPrice.discountAmount, 0);
+    assert.equal(fullPrice.couponCode, null);
+    update.mock.restore();
+  }
+});
+
+test('new discounted orders persist the coupon, original price and payable amount', async (t) => {
+  const { createOrder } = await import('../../src/modules/orders/orders.service');
+  const { Order } = await import('../../src/models/Order');
+  t.mock.method(Order, 'findOne', async () => null);
+  const create = t.mock.method(Order, 'create', async (details: object) => {
+    const order = new Order(details);
+    order.set('createdAt', new Date());
+    return order;
+  });
+  const result = await createOrder('000000000000000000000001', {
+    ...buyer,
+    productId: 'basic-to-advanced-course',
+    couponCode: 'ET10',
+  });
+  assert.equal(create.mock.calls.length, 1);
+  assert.equal(result.amount, 225);
+  assert.equal(result.originalAmount, 250);
+  assert.equal(result.discountAmount, 25);
+  assert.equal(result.couponCode, 'ET10');
+});
+
+test('invalid coupons cannot bypass validation by calling the order service directly', async () => {
+  const { createOrder } = await import('../../src/modules/orders/orders.service');
+  await assert.rejects(
+    createOrder('000000000000000000000001', {
+      ...buyer,
+      productId: 'basic-to-advanced-course',
+      couponCode: 'FREE100',
+    }),
+    /Invalid coupon code/,
+  );
+});
+
+test('submitted discounted payments retain their original price and discount', async (t) => {
+  const { checkoutConfig, createOrder } = await import('../../src/modules/orders/orders.service');
+  const { Order } = await import('../../src/models/Order');
+  const order = await oldOrder('advanced-to-pro-course', 225, 'submitted');
+  order.set({ couponCode: 'ET10', originalAmount: 250, discountAmount: 25 });
+  const save = t.mock.method(order, 'save', async () => order);
+  const reload = t.mock.method(Order, 'findOne', () => ({ sort: async () => order }) as never);
+  const result = await checkoutConfig('000000000000000000000001', order.productId);
+  assert.equal(result.existingOrder?.amount, 225);
+  assert.equal(result.existingOrder?.originalAmount, 250);
+  assert.equal(result.existingOrder?.discountAmount, 25);
+  assert.equal(save.mock.calls.length, 0);
+  reload.mock.restore();
+  t.mock.method(Order, 'findOne', async () => order);
+  await assert.rejects(
+    createOrder('000000000000000000000001', {
+      ...buyer,
+      productId: order.productId,
+      couponCode: '',
+    }),
+    /already submitted a payment/,
   );
 });

@@ -16,6 +16,7 @@ import {
   networkInfo,
   paymentQrValue,
   qrCarriesAmount,
+  productQuote,
   type CheckoutConfig,
   type OrderDto,
   type PaymentNetwork,
@@ -28,6 +29,7 @@ import { ordersApi } from '@/features/commerce/orders.api';
 import { cn } from '@/lib/cn';
 import { CopyButton } from './copy-button';
 import { OrderStatusBadge } from './order-status';
+import { CourseCoupon } from './course-coupon';
 
 type Step = 'details' | 'pay' | 'review' | 'done';
 
@@ -69,8 +71,19 @@ function Steps({ step }: { step: Step }) {
   );
 }
 
-function Summary({ config, order }: { config: CheckoutConfig; order: OrderDto | null }) {
+function Summary({
+  config,
+  order,
+  couponCode,
+  editing,
+}: {
+  config: CheckoutConfig;
+  order: OrderDto | null;
+  couponCode: string;
+  editing: boolean;
+}) {
   const { product } = config;
+  const quote = order && !editing ? order : productQuote(product, couponCode);
   return (
     <aside className={cn(card, 'min-[901px]:sticky min-[901px]:top-[110px]')}>
       <span className={cn(eyebrow, 'text-violet-3')}>ORDER SUMMARY</span>
@@ -80,10 +93,25 @@ function Summary({ config, order }: { config: CheckoutConfig; order: OrderDto | 
       <p className="mt-1 text-[13px] text-muted">
         {product.type === 'course' ? 'Recorded video course · lifetime access' : 'PDF e-book'}
       </p>
-      <div className="mt-6 flex items-baseline justify-between border-t border-line pt-5">
+      {quote.discountAmount > 0 && (
+        <dl className="mt-5 grid gap-2 text-[13px]">
+          <div className="flex justify-between gap-3 text-muted">
+            <dt>Course price</dt>
+            <dd>{quote.originalAmount} USDT</dd>
+          </div>
+          <div className="flex justify-between gap-3 text-cyan">
+            <dt>{quote.couponCode} · 10% off</dt>
+            <dd>−{quote.discountAmount} USDT</dd>
+          </div>
+        </dl>
+      )}
+      <div
+        className="mt-6 flex items-baseline justify-between border-t border-line pt-5"
+        aria-live="polite"
+      >
         <span className="text-[13px] text-muted">Total</span>
         <strong className={cn(mono, 'text-[28px] font-extrabold text-white')}>
-          {product.price} <span className="text-[14px] text-violet-3">USDT</span>
+          {quote.amount} <span className="text-[14px] text-violet-3">USDT</span>
         </strong>
       </div>
       {order && (
@@ -118,11 +146,15 @@ function DetailsStep({
   order,
   onSaved,
   onCancel,
+  couponCode,
+  onCouponChange,
 }: {
   config: CheckoutConfig;
   order: OrderDto | null;
   onSaved: (order: OrderDto) => void;
   onCancel?: () => void;
+  couponCode: string;
+  onCouponChange: (code: string) => void;
 }) {
   const [network, setNetwork] = useState<PaymentNetwork | ''>(
     order?.network ?? (config.networks.length === 1 ? config.networks[0] : ''),
@@ -175,6 +207,7 @@ function DetailsStep({
           accessEmail: String(data.get('accessEmail') ?? ''),
           whatsapp: String(data.get('whatsapp') ?? ''),
           telegram: String(data.get('telegram') ?? ''),
+          ...(config.product.type === 'course' ? { couponCode } : {}),
         }),
       );
     } catch (e) {
@@ -249,6 +282,7 @@ function DetailsStep({
           />
         </label>
       </div>
+      <CourseCoupon product={config.product} value={couponCode} onChange={onCouponChange} />
       <fieldset className="m-0 min-w-0 border-0 p-0">
         <legend className="mb-3 text-[12.5px] font-medium text-[#cdc6dd]">Pay with USDT on</legend>
         <div className="grid grid-cols-3 gap-3 max-[560px]:grid-cols-1">
@@ -502,11 +536,18 @@ function DoneStep({ order }: { order: OrderDto }) {
   );
 }
 
-export function CheckoutFlow({ productId }: { productId: string }) {
+export function CheckoutFlow({
+  productId,
+  initialCouponCode = '',
+}: {
+  productId: string;
+  initialCouponCode?: string;
+}) {
   const [config, setConfig] = useState<CheckoutConfig | null>(null);
   const [order, setOrder] = useState<OrderDto | null>(null);
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState('');
+  const [couponCode, setCouponCode] = useState(initialCouponCode);
 
   useEffect(() => {
     ordersApi
@@ -514,9 +555,20 @@ export function CheckoutFlow({ productId }: { productId: string }) {
       .then((data) => {
         setConfig(data);
         setOrder(data.existingOrder);
+        const existing = data.existingOrder;
+        setCouponCode(
+          data.product.type === 'course' ? initialCouponCode || existing?.couponCode || '' : '',
+        );
+        setEditing(
+          Boolean(
+            initialCouponCode &&
+            existing?.status === 'awaiting_payment' &&
+            initialCouponCode !== existing.couponCode,
+          ),
+        );
       })
       .catch((e) => setError((e as Error).message));
-  }, [productId]);
+  }, [productId, initialCouponCode]);
 
   if (error)
     return (
@@ -547,11 +599,21 @@ export function CheckoutFlow({ productId }: { productId: string }) {
             <DetailsStep
               config={config}
               order={order}
+              couponCode={couponCode}
+              onCouponChange={setCouponCode}
               onSaved={(saved) => {
                 setOrder(saved);
+                setCouponCode(saved.couponCode || '');
                 setEditing(false);
               }}
-              onCancel={order ? () => setEditing(false) : undefined}
+              onCancel={
+                order
+                  ? () => {
+                      setCouponCode(order.couponCode || '');
+                      setEditing(false);
+                    }
+                  : undefined
+              }
             />
           )}
           {step === 'pay' && order && (
@@ -560,7 +622,12 @@ export function CheckoutFlow({ productId }: { productId: string }) {
           {step === 'review' && order && <ReviewStep order={order} />}
           {step === 'done' && order && <DoneStep order={order} />}
         </div>
-        <Summary config={config} order={order} />
+        <Summary
+          config={config}
+          order={order}
+          couponCode={couponCode}
+          editing={step === 'details'}
+        />
       </div>
     </>
   );
